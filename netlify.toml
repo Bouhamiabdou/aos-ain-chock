@@ -1,0 +1,13 @@
+# Seul le dossier du site est publie. Rien d'autre de ce repertoire ne part en ligne.
+[build]
+  publish = "aos-ain-chock"
+
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

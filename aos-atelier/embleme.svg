@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" width="720" height="420">
+  <rect width="720" height="420" fill="#0B1220"/>
+  <defs>
+    <clipPath id="a"><path d="M20 88 V46 C20 26 33 13 48 13 C63 13 76 26 76 46 V88 Z"/></clipPath>
+    <g id="marque">
+      <g clip-path="url(#a)">
+        <g fill="none" stroke="#C9A24B" stroke-width="1.7" opacity=".85" stroke-dasharray="47 6 29">
+          <path d="M34 10V92"/><path d="M48 10V92"/><path d="M62 10V92"/>
+        </g>
+        <g fill="none" stroke="#2FB98A" stroke-width="1.7" opacity=".9">
+          <path d="M14 44H82" stroke-dasharray="17 6 8 6 8 6 20"/>
+          <path d="M14 60H82"/>
+          <path d="M14 76H82" stroke-dasharray="17 6 8 6 8 6 20"/>
+        </g>
+      </g>
+      <path fill="none" stroke="#C9A24B" stroke-width="2.6" stroke-linejoin="round" d="M20 88 V46 C20 26 33 13 48 13 C63 13 76 26 76 46 V88 Z"/>
+      <path fill="none" stroke="#C9A24B" stroke-width="2.6" stroke-linecap="round" d="M12 95H84"/>
+    </g>
+  </defs>
+
+  <g transform="translate(76 60) scale(2.4)"><use href="#marque"/></g>
+  <g transform="translate(360 128) scale(1.1)"><use href="#marque"/></g>
+  <g transform="translate(470 156) scale(0.55)"><use href="#marque"/></g>
+  <g transform="translate(530 168) scale(0.28)"><use href="#marque"/></g>
+
+  <text x="360" y="330" fill="#F0EDE4" font-family="Georgia, serif" font-size="21">Association des œuvres sociales</text>
+  <text x="360" y="360" fill="#A8B6CE" font-family="Georgia, serif" font-size="16">Arrondissement Ain Chock</text>
+  <text x="360" y="392" fill="#C9A24B" font-family="Georgia, serif" font-size="13">L'arche de l'arrondissement, l'étoffe tissée des adhérents</text>
+</svg>

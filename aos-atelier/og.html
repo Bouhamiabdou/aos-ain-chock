@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:"Bricolage Grotesque";font-weight:700;src:url("../aos-ain-chock/assets/fonts/bricolage-700.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-weight:400;src:url("../aos-ain-chock/assets/fonts/plexsans-400.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-weight:500;src:url("../aos-ain-chock/assets/fonts/plexmono-500.woff2") format("woff2")}
+@font-face{font-family:"Reem Kufi";font-weight:700;src:url("../aos-ain-chock/assets/fonts/reem-700.woff2") format("woff2")}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1200px;height:630px;background:#0B1220;overflow:hidden;position:relative;
+  font-family:"IBM Plex Sans",sans-serif;color:#F0EDE4}
+.fond{position:absolute;inset:0;
+  background:radial-gradient(60% 50% at 20% 10%,rgba(47,185,138,.12),transparent 70%),
+             radial-gradient(55% 55% at 85% 85%,rgba(201,162,75,.11),transparent 72%),
+             linear-gradient(180deg,#0F1930,#0B1220 62%)}
+.toile{position:absolute;inset:0;opacity:.5}
+.toile line.w{stroke:#C9A24B;stroke-width:1}
+.toile line.f{stroke:#7089AE;stroke-width:1;opacity:.5}
+.bloc{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:0 88px;gap:26px}
+.embleme{width:104px;height:auto}
+.embleme .a{fill:none;stroke:#C9A24B;stroke-width:2.6;stroke-linejoin:round}
+.embleme .w{fill:none;stroke:#C9A24B;stroke-width:1.7;opacity:.85}
+.embleme .f{fill:none;stroke:#2FB98A;stroke-width:1.7;opacity:.9}
+.embleme .s{fill:none;stroke:#C9A24B;stroke-width:2.6;stroke-linecap:round}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:17px;letter-spacing:.16em;
+  text-transform:uppercase;color:#2FB98A}
+h1{font-family:"Bricolage Grotesque",sans-serif;font-size:54px;line-height:1.06;
+  letter-spacing:-.02em;max-width:19ch}
+.ar{font-family:"Reem Kufi",sans-serif;font-size:33px;color:#C9A24B;direction:rtl}
+.sous{font-size:22px;color:#A8B6CE;max-width:52ch}
+</style></head>
+<body>
+<div class="fond"></div>
+<svg class="toile" viewBox="0 0 1200 630" preserveAspectRatio="none">
+  <line class="w" x1="120" y1="0" x2="140" y2="630"/><line class="w" x1="290" y1="0" x2="270" y2="630"/>
+  <line class="w" x1="470" y1="0" x2="490" y2="630"/><line class="w" x1="660" y1="0" x2="640" y2="630"/>
+  <line class="w" x1="840" y1="0" x2="860" y2="630"/><line class="w" x1="1020" y1="0" x2="1000" y2="630"/>
+  <line class="f" x1="0" y1="120" x2="1200" y2="108"/><line class="f" x1="0" y1="300" x2="1200" y2="312"/>
+  <line class="f" x1="0" y1="500" x2="1200" y2="488"/>
+</svg>
+<div class="bloc">
+  <svg class="embleme" viewBox="22 38 156 156">
+    <g fill="#E0574A"><g transform="translate(52 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+    <g fill="#2FB98A"><g transform="translate(100 96) scale(1.28)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+    <g fill="#E0574A"><g transform="translate(148 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+    <path fill="none" stroke="#2FB98A" stroke-width="6" stroke-linecap="round" d="M28 172 Q100 190 172 172"/>
+  </svg>
+  <p class="eyebrow">Association des œuvres sociales</p>
+  <h1>Œuvres sociales des fonctionnaires, arrondissement Ain Chock</h1>
+  <p class="ar">جمعية الأعمال الإجتماعية لموظفي مقاطعة عين الشق</p>
+  <p class="sous">Santé, colonies de vacances, loisirs, événements. Ce à quoi vous avez droit, et comment l'obtenir.</p>
+</div>
+</body></html>

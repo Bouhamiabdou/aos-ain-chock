@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aos-ain-chock",
+      "runtimeExecutable": "npx.cmd",
+      "runtimeArgs": ["-y", "http-server", "aos-ain-chock", "-p", "4173", "-c-1"],
+      "port": 4173
+    }
+  ]
+}

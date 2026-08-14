@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:"Bricolage Grotesque";font-weight:700;src:url("../aos-ain-chock/assets/fonts/bricolage-700.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-weight:400;src:url("../aos-ain-chock/assets/fonts/plexsans-400.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-weight:500;src:url("../aos-ain-chock/assets/fonts/plexmono-500.woff2") format("woff2")}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1400px;background:#0B1220;color:#F0EDE4;font-family:"IBM Plex Sans",sans-serif;padding:52px 56px 60px}
+h1{font-family:"Bricolage Grotesque",sans-serif;font-size:34px;margin-bottom:8px}
+.intro{color:#A8B6CE;font-size:17px;max-width:74ch;margin-bottom:40px}
+.grille{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+.carte{background:linear-gradient(180deg,rgba(20,31,56,.9),rgba(15,25,48,.6));border:1px solid #26355A;
+  border-radius:18px;padding:26px 24px;display:flex;flex-direction:column;gap:16px}
+.etiq{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2FB98A}
+.carte h2{font-family:"Bricolage Grotesque",sans-serif;font-size:20px;line-height:1.2}
+.carte p{font-size:14px;color:#A8B6CE;line-height:1.55}
+.scene{height:210px;display:flex;align-items:center;justify-content:center;background:#0E1626;border-radius:12px;border:1px solid #1B2740}
+.scene img{max-height:180px;width:auto}
+.scene svg{height:180px;width:auto}
+.petit{display:flex;align-items:center;gap:16px;padding-top:6px;border-top:1px dashed #26355A}
+.petit svg,.petit img{height:34px;width:auto}
+.petit .mini svg,.petit .mini img{height:18px}
+.petit span{font-family:"IBM Plex Mono",monospace;font-size:10px;color:#7089AE;letter-spacing:.1em}
+.verdict{margin-top:14px;font-size:13px;padding:10px 12px;border-radius:9px}
+.ko{background:rgba(201,80,80,.14);border:1px solid rgba(201,80,80,.4);color:#F0C9C9}
+.ok{background:rgba(47,185,138,.14);border:1px solid rgba(47,185,138,.4);color:#BFEFDC}
+</style></head>
+<body>
+<h1>Le logo, quatre pistes</h1>
+<p class="intro">L'emblème actuel est celui de l'arrondissement, dessiné pour le papier. Sur un écran de téléphone il occupe 26 pixels de haut. Voici ce qu'il devient à cette taille, et trois façons de faire mieux.</p>
+
+<div class="grille">
+
+  <div class="carte">
+    <p class="etiq">Aujourd'hui</p>
+    <h2>L'emblème de l'arrondissement</h2>
+    <div class="scene"><img src="revue/logo-fb.jpg" alt=""></div>
+    <div class="petit">
+      <img src="revue/logo-fb.jpg" alt="">
+      <span class="mini"><img src="revue/logo-fb.jpg" alt=""></span>
+      <span>34 px, puis 18 px</span>
+    </div>
+    <p>Couronne, couronne de laurier, bâtiments, trois personnages, lettres arabes et une ligne de texte. Sept niveaux de détail.</p>
+    <div class="verdict ko">À 18 pixels, tout se referme en une tache verte. Illisible en barre de navigation et en onglet.</div>
+  </div>
+
+  <div class="carte">
+    <p class="etiq">Piste 1</p>
+    <h2>Les trois personnages seuls</h2>
+    <div class="scene">
+      <svg viewBox="0 0 200 200">
+        <g fill="#C0392F"><g transform="translate(52 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+        <g fill="#1E8A54"><g transform="translate(100 96) scale(1.28)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+        <g fill="#C0392F"><g transform="translate(148 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+        <path d="M28 172 Q100 190 172 172" fill="none" stroke="#1E8A54" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="petit">
+      <svg viewBox="0 0 200 200"><g fill="#C0392F"><g transform="translate(52 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#1E8A54"><g transform="translate(100 96) scale(1.28)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#C0392F"><g transform="translate(148 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><path d="M28 172 Q100 190 172 172" fill="none" stroke="#1E8A54" stroke-width="6" stroke-linecap="round"/></svg>
+      <span class="mini"><svg viewBox="0 0 200 200"><g fill="#C0392F"><g transform="translate(52 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#1E8A54"><g transform="translate(100 96) scale(1.28)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#C0392F"><g transform="translate(148 108) scale(1.05)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g></svg></span>
+      <span>34 px, puis 18 px</span>
+    </div>
+    <p>On garde le cœur humain de l'emblème et ses couleurs, on retire la couronne, le laurier, les bâtiments et le texte.</p>
+    <div class="verdict ok">Lisible jusqu'à 18 pixels. Aucun symbole d'État, donc aucune question d'autorisation.</div>
+  </div>
+
+  <div class="carte">
+    <p class="etiq">Piste 2</p>
+    <h2>Les personnages sous l'arche</h2>
+    <div class="scene">
+      <svg viewBox="0 0 200 200">
+        <path d="M46 168 V96 C46 62 70 40 100 40 C130 40 154 62 154 96 V168" fill="none" stroke="#C9A24B" stroke-width="6" stroke-linejoin="round"/>
+        <path d="M34 178 H166" fill="none" stroke="#C9A24B" stroke-width="6" stroke-linecap="round"/>
+        <g fill="#C9A24B"><g transform="translate(72 132) scale(.72)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+        <g fill="#2FB98A"><g transform="translate(100 124) scale(.86)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+        <g fill="#C9A24B"><g transform="translate(128 132) scale(.72)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+      </svg>
+    </div>
+    <div class="petit">
+      <svg viewBox="0 0 200 200"><path d="M46 168 V96 C46 62 70 40 100 40 C130 40 154 62 154 96 V168" fill="none" stroke="#C9A24B" stroke-width="8" stroke-linejoin="round"/><path d="M34 178 H166" fill="none" stroke="#C9A24B" stroke-width="8" stroke-linecap="round"/><g fill="#C9A24B"><g transform="translate(72 132) scale(.72)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#2FB98A"><g transform="translate(100 124) scale(.86)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#C9A24B"><g transform="translate(128 132) scale(.72)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g></svg>
+      <span class="mini"><svg viewBox="0 0 200 200"><path d="M46 168 V96 C46 62 70 40 100 40 C130 40 154 62 154 96 V168" fill="none" stroke="#C9A24B" stroke-width="11" stroke-linejoin="round"/><path d="M34 178 H166" fill="none" stroke="#C9A24B" stroke-width="11" stroke-linecap="round"/><g fill="#2FB98A"><g transform="translate(100 124) scale(.9)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g></svg></span>
+      <span>34 px, puis 18 px</span>
+    </div>
+    <p>Le motif humain de l'emblème entre dans l'arche du site, aux couleurs du site. Le logo et la page deviennent un seul monde.</p>
+    <div class="verdict ok">Le plus cohérent avec le site. À 18 pixels il ne reste que l'arche et un personnage, et ça suffit.</div>
+  </div>
+
+  <div class="carte">
+    <p class="etiq">Piste 3</p>
+    <h2>L'emblème officiel, mais rangé</h2>
+    <div class="scene">
+      <svg viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="76" fill="none" stroke="#1E8A54" stroke-width="3"/>
+        <g stroke="#1E8A54" stroke-width="3" fill="none" stroke-linecap="round">
+          <path d="M100 24 v-0"/><path d="M46 46 l-6-6"/><path d="M154 46 l6-6"/>
+        </g>
+        <g fill="#2E3A8C"><rect x="72" y="70" width="11" height="42" rx="2"/><rect x="88" y="60" width="11" height="52" rx="2"/><rect x="104" y="66" width="11" height="46" rx="2"/><rect x="120" y="76" width="11" height="36" rx="2"/></g>
+        <g fill="#C0392F"><g transform="translate(78 140) scale(.62)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+        <g fill="#1E8A54"><g transform="translate(100 136) scale(.72)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+        <g fill="#C0392F"><g transform="translate(122 140) scale(.62)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g>
+      </svg>
+    </div>
+    <div class="petit">
+      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="76" fill="none" stroke="#1E8A54" stroke-width="6"/><g fill="#2E3A8C"><rect x="72" y="70" width="11" height="42" rx="2"/><rect x="88" y="60" width="11" height="52" rx="2"/><rect x="104" y="66" width="11" height="46" rx="2"/><rect x="120" y="76" width="11" height="36" rx="2"/></g><g fill="#C0392F"><g transform="translate(78 140) scale(.62)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#1E8A54"><g transform="translate(100 136) scale(.72)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g><g fill="#C0392F"><g transform="translate(122 140) scale(.62)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g></svg>
+      <span class="mini"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="76" fill="none" stroke="#1E8A54" stroke-width="10"/><g fill="#2E3A8C"><rect x="80" y="66" width="14" height="48" rx="2"/><rect x="102" y="58" width="14" height="56" rx="2"/></g><g fill="#1E8A54"><g transform="translate(100 138) scale(.8)"><circle cy="-34" r="12"/><path d="M0 46C-2 30-7 22-18 17c-5-2-7-8-4-13 3-5 9-6 14-2 6 4 6 9 8 14 2-5 2-10 8-14 5-4 11-3 14 2 3 5 1 11-4 13-11 5-16 13-18 30z"/></g></g></svg></span>
+      <span>34 px, puis 18 px</span>
+    </div>
+    <p>Même composition qu'aujourd'hui, mais le laurier devient un anneau simple, les bâtiments des barres nettes, et le texte disparaît.</p>
+    <div class="verdict ok">Reste reconnaissable comme l'emblème. La couronne n'y est pas : je ne redessine pas un symbole de l'État.</div>
+  </div>
+
+</div>
+</body></html>

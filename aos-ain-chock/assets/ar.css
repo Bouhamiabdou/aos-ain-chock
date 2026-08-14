@@ -1,0 +1,4 @@
+/* Polices arabes, chargees seulement quand le visiteur bascule en arabe. */
+@font-face{font-family:"IBM Plex Sans Arabic";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/plexar-400.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Sans Arabic";font-style:normal;font-weight:500;font-display:swap;src:url("fonts/plexar-500.woff2") format("woff2")}
+@font-face{font-family:"Reem Kufi";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/reem-700.woff2") format("woff2")}
