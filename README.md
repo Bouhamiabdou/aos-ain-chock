@@ -67,5 +67,16 @@ le passage en RTL déplace plusieurs éléments (flèches, listes, champs de for
 
 ## Déploiement
 
-Automatique via Netlify à chaque push sur `master`. Aucune commande de build :
-Netlify sert directement le contenu de `aos-ain-chock/`.
+Le site est en ligne sur Netlify, sous le projet `aos-ain-chock`.
+
+⚠️ **Le déploiement n'est pas automatique.** Le site Netlify **n'est pas relié à ce
+dépôt GitHub** : le déploiement publié a été créé par envoi direct d'une archive
+(`deploy_source: api`, « Deploy triggered by upload », sans référence de commit).
+
+Conséquence à ne pas manquer : **pousser sur `master` ne met pas le site à jour.**
+Tant que la liaison Git n'est pas configurée, chaque mise en ligne demande un
+nouvel envoi manuel du contenu de `aos-ain-chock/`.
+
+Pour passer en déploiement automatique, il faut relier le projet au dépôt depuis
+le tableau de bord Netlify (Project configuration → Build & deploy → Link
+repository), avec `publish = "aos-ain-chock"` et aucune commande de build.
