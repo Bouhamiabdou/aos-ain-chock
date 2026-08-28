@@ -53,8 +53,11 @@ JavaScript inclus. Pas de framework, pas d'étape de build, pas de `npm install`
 - **Dégradation propre.** L'apparition de la page est une animation CSS partant de
   l'invisible, pas un état par défaut : si le JavaScript échoue, la page reste
   lisible au lieu de rester blanche.
-- **Cache.** `netlify.toml` fige les polices pour un an (`immutable`) et les autres
-  assets pour une semaine.
+- **Cache.** Les polices sont figées pour un an (`immutable`) et les autres assets
+  pour une semaine. Ces règles d'en-tête sont déclarées côté Netlify — vérifiez où
+  avant de les modifier : à la racine dans `netlify.toml`, ou dans
+  `aos-ain-chock/_headers`, qui a l'avantage de suivre le dossier publié même lors
+  d'un dépôt manuel.
 
 ## Modifier le contenu
 
