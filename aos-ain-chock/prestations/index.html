@@ -109,6 +109,14 @@ summary.bloc-titre:hover{color:var(--accent)}
 .rang{font-family:var(--mono);font-size:11px;color:var(--brass);background:var(--brass-soft);border-radius:5px;padding:1px 6px;flex:none;margin-top:1px}
 .ligne-lib{flex:1;font-size:13px;font-weight:600;line-height:1.35;min-width:0;overflow-wrap:anywhere}
 .ligne-cat{font-size:11px;color:var(--text-3);font-family:var(--mono);display:block;margin-top:2px;font-weight:400}
+.ligne-btns{display:flex;gap:1px;flex:none}
+.ico{background:none;border:none;color:var(--text-3);cursor:pointer;padding:2px 5px;border-radius:5px;line-height:1;font-size:12px}
+.ico:hover{color:var(--accent);background:var(--panel-2)}
+.champ-lib{margin-top:8px}
+.champ-lib input{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12px;width:100%}
+.champ-lib input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.barre-ordre{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:-2px 0 9px;font-family:var(--mono);font-size:10.5px;color:var(--text-3)}
+.barre-ordre .mini{font-family:var(--body)}
 .retirer{background:none;border:none;color:var(--text-3);cursor:pointer;padding:2px 5px;border-radius:5px;flex:none;line-height:1}
 .retirer:hover{color:var(--danger);background:rgba(224,87,74,.12)}
 .ligne-champs{display:grid;gap:6px;margin-top:8px;grid-template-columns:repeat(3,1fr)}
@@ -239,6 +247,10 @@ summary.bloc-titre:hover{color:var(--accent)}
         </div>
       </details>
       <div class="bloc-titre">Lignes retenues</div>
+      <div class="barre-ordre" id="barre-ordre" hidden>
+        <span id="etiq-ordre">Ordre : nomenclature</span>
+        <button class="mini" id="ordre-reset" hidden>Rétablir l'ordre des nomenclatures</button>
+      </div>
       <div id="lignes"></div>
     </div>
     <div class="totaux" id="totaux" hidden></div>
@@ -274,6 +286,7 @@ const CLE = "aos-bpde-v1";
 const S = {
   ref: DONNEES.referentiels[0].id,
   doc: "bpde",
+  ordre: "nomenclature",        /* « nomenclature » ou « manuel » */
   entete: { maitre:"", service:"", objet:"", numero:"", date:"", exercice:"",
             rubrique:"", mode:"", tva:"20", demandeur:"", qualite:"", concurrent:"", lieu:"" },
   sel: {}
@@ -285,6 +298,7 @@ function charger(){
     if(!b) return;
     if(b.ref) S.ref = b.ref;
     if(b.doc) S.doc = b.doc;
+    if(b.ordre) S.ordre = b.ordre;
     if(b.entete) Object.assign(S.entete, b.entete);
     if(b.sel) S.sel = b.sel;
   }catch(e){}
@@ -353,9 +367,46 @@ function cle(ref, gnum, lib){ return ref + "@@" + gnum + "@@" + lib; }
 function lignesTriees(){
   const ordreRef = {};
   DONNEES.referentiels.forEach((r,i) => { ordreRef[r.id] = i; });
-  return Object.keys(S.sel).map(k => Object.assign({k:k}, S.sel[k]))
-    .sort((a,b) => (ordreRef[a.ref]-ordreRef[b.ref]) || (a.gi-b.gi) || (a.ei-b.ei)
-                   || a.lib.localeCompare(b.lib,"fr"));
+  const l = Object.keys(S.sel).map(k => Object.assign({k:k}, S.sel[k]));
+  if(S.ordre === "manuel"){
+    return l.sort((a,b) => (a.ordre==null?9999:a.ordre) - (b.ordre==null?9999:b.ordre));
+  }
+  return l.sort((a,b) => (ordreRef[a.ref]-ordreRef[b.ref]) || (a.gi-b.gi) || (a.ei-b.ei)
+                   || ((a.sousOrdre||0)-(b.sousOrdre||0)) || a.lib.localeCompare(b.lib,"fr"));
+}
+/* Fige l'ordre courant dans les lignes, puis renumérote de 0 à n-1. */
+function figerOrdre(){
+  lignesTriees().forEach(function(x, i){ S.sel[x.k].ordre = i; });
+  S.ordre = "manuel";
+}
+function renumeroter(){
+  lignesTriees().forEach(function(x, i){ S.sel[x.k].ordre = i; });
+}
+function deplacer(k, sens){
+  if(S.ordre !== "manuel") figerOrdre();
+  const l = lignesTriees();
+  const i = l.findIndex(x => x.k === k);
+  const j = i + sens;
+  if(i < 0 || j < 0 || j >= l.length) return;
+  const a = S.sel[l[i].k].ordre;
+  S.sel[l[i].k].ordre = S.sel[l[j].k].ordre;
+  S.sel[l[j].k].ordre = a;
+  sauver(); rendrePanier();
+}
+/* Duplique une ligne : même prestation, seconde spécification (variante). */
+function dupliquer(k){
+  const x = S.sel[k]; if(!x) return;
+  const racine = k.split("#")[0];
+  const soeurs = Object.keys(S.sel).filter(z => z.split("#")[0] === racine);
+  let n = 2; while(S.sel[racine + "#" + n]) n++;
+  let so = 0;
+  soeurs.forEach(function(z){ so = Math.max(so, S.sel[z].sousOrdre || 0); });
+  const nk = racine + "#" + n;
+  S.sel[nk] = Object.assign({}, x, { sousOrdre: so + 1, variante: true });
+  if(S.ordre === "manuel"){ S.sel[nk].ordre = (x.ordre || 0) + 0.5; renumeroter(); }
+  sauver(); rendrePanier();
+  const el = document.querySelector('.ligne[data-k="' + nk.replace(/"/g, '\\"') + '"] input[data-f=lib]');
+  if(el) el.focus();
 }
 function totaux(){
   const l = lignesTriees();
@@ -455,8 +506,10 @@ function brancherCatalogue(){
       const k = c.dataset.k;
       if(c.checked){
         S.sel[k] = { ref:r.id, gnum:c.dataset.gnum, gLib:groupeLib(r, c.dataset.gnum), lib:c.dataset.lib,
-                     gi:+c.dataset.gi, ei:+c.dataset.ei, unite:"Unité", qte:1, pu:"", obs:"" };
-      }else{ delete S.sel[k]; }
+                     gi:+c.dataset.gi, ei:+c.dataset.ei, unite:"Unité", qte:1, pu:"", obs:"", sousOrdre:0 };
+      }else{
+        Object.keys(S.sel).forEach(function(z){ if(z === k || z.indexOf(k + "#") === 0) delete S.sel[z]; });
+      }
       sauver(); rendrePanier(); majBadges();
     };
   });
@@ -470,19 +523,19 @@ function brancherCatalogue(){
         g.elements.forEach(function(e, ei){
           const k = cle(r.id, g.num, e);
           if(!S.sel[k]) S.sel[k] = { ref:r.id, gnum:g.num, gLib:g.libelle, lib:e, gi:gi, ei:ei,
-                                     unite:"Unité", qte:1, pu:"", obs:"" };
+                                     unite:"Unité", qte:1, pu:"", obs:"", sousOrdre:0 };
         });
       }else if(b.dataset.rien){
         Object.keys(S.sel).forEach(function(k){ if(S.sel[k].ref===r.id && S.sel[k].gnum===g.num) delete S.sel[k]; });
       }else if(b.dataset.seul){
         S.sel[cle(r.id, g.num, g.libelle)] = { ref:r.id, gnum:g.num, gLib:g.libelle, lib:g.libelle, gi:gi, ei:0,
-                     unite:"Forfait", qte:1, pu:"", obs:"", perso:true };
+                     unite:"Forfait", qte:1, pu:"", obs:"", perso:true, sousOrdre:0 };
       }else if(b.dataset.add){
         const inp = b.parentElement.querySelector("input[data-perso]");
         const v = (inp.value || "").trim();
         if(!v){ inp.focus(); return; }
         S.sel[cle(r.id, g.num, v)] = { ref:r.id, gnum:g.num, gLib:g.libelle, lib:v, gi:gi, ei:900 + g.elements.length,
-                     unite:"Unité", qte:1, pu:"", obs:"", perso:true };
+                     unite:"Unité", qte:1, pu:"", obs:"", perso:true, sousOrdre:0 };
         inp.value = "";
       }
       sauver(); rendreCatalogue(); rendrePanier();
@@ -517,6 +570,7 @@ function rendrePanier(){
   if(!l.length){
     $("#lignes").innerHTML = '<p class="panier-vide">Aucune prestation retenue.<br>Cochez les prestations dans le catalogue ; elles apparaîtront ici, numérotées dans l\'ordre des nomenclatures.</p>';
     $("#totaux").hidden = true;
+    $("#barre-ordre").hidden = true;
     $("#export").disabled = true; $("#imprimer").disabled = true;
     return;
   }
@@ -536,8 +590,16 @@ function rendrePanier(){
     html += '<div class="ligne" data-k="'+ech(x.k)+'">'
       + '<div class="ligne-tete"><span class="rang">'+(i+1)+'</span>'
       + '<span class="ligne-lib">' + ech(x.lib)
-      + '<span class="ligne-cat">' + ech(x.gnum + " · " + x.gLib) + (x.perso ? " · ajout manuel" : "") + "</span></span>"
-      + '<button class="retirer" data-r="'+ech(x.k)+'" aria-label="Retirer cette ligne">✕</button></div>'
+      + '<span class="ligne-cat">' + ech(x.gnum + " · " + x.gLib) + (x.variante ? " · variante" : (x.perso ? " · ajout manuel" : "")) + "</span></span>"
+      + '<span class="ligne-btns">'
+      + '<button class="ico" data-haut="'+ech(x.k)+'" title="Monter la ligne" aria-label="Monter la ligne">↑</button>'
+      + '<button class="ico" data-bas="'+ech(x.k)+'" title="Descendre la ligne" aria-label="Descendre la ligne">↓</button>'
+      + '<button class="ico" data-dup="'+ech(x.k)+'" title="Dupliquer : seconde spécification de la même prestation" aria-label="Dupliquer la ligne">⧉</button>'
+      + '<button class="ico retirer" data-r="'+ech(x.k)+'" title="Retirer la ligne" aria-label="Retirer cette ligne">✕</button>'
+      + "</span></div>"
+      + ((x.perso || x.variante)
+          ? '<div class="mini-champ champ-lib"><label>Libellé porté au bordereau</label><input value="'+ech(x.lib)+'" data-f="lib"></div>'
+          : "")
       + '<div class="ligne-champs' + (prix ? " prix" : "") + '">'
       + '<div class="mini-champ"><label>Unité</label><input list="unites" value="'+ech(x.unite)+'" data-f="unite"></div>'
       + '<div class="mini-champ"><label>Quantité</label><input type="number" min="0" step="any" value="'+ech(x.qte)+'" data-f="qte"></div>'
@@ -551,10 +613,25 @@ function rendrePanier(){
       + "</div>";
   });
   $("#lignes").innerHTML = html;
+  $("#barre-ordre").hidden = false;
+  $("#etiq-ordre").textContent = S.ordre === "manuel" ? "Ordre : manuel" : "Ordre : nomenclature";
+  $("#ordre-reset").hidden = S.ordre !== "manuel";
+  $("#ordre-reset").onclick = function(){
+    S.ordre = "nomenclature";
+    Object.keys(S.sel).forEach(function(k){ delete S.sel[k].ordre; });
+    sauver(); rendrePanier();
+  };
 
   $("#lignes").querySelectorAll(".retirer").forEach(function(b){
-    b.onclick = function(){ delete S.sel[b.dataset.r]; sauver(); rendreCatalogue(); rendrePanier(); };
+    b.onclick = function(){
+      const k = b.dataset.r;
+      Object.keys(S.sel).forEach(function(z){ if(z === k || z.indexOf(k + "#") === 0) delete S.sel[z]; });
+      sauver(); rendreCatalogue(); rendrePanier();
+    };
   });
+  $("#lignes").querySelectorAll("[data-haut]").forEach(function(b){ b.onclick = function(){ deplacer(b.dataset.haut, -1); }; });
+  $("#lignes").querySelectorAll("[data-bas]").forEach(function(b){ b.onclick = function(){ deplacer(b.dataset.bas, 1); }; });
+  $("#lignes").querySelectorAll("[data-dup]").forEach(function(b){ b.onclick = function(){ dupliquer(b.dataset.dup); }; });
   $("#lignes").querySelectorAll(".regen").forEach(function(b){
     b.onclick = function(){
       const x = S.sel[b.dataset.g]; if(!x) return;

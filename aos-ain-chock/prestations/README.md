@@ -10,9 +10,13 @@ Elle s'ouvre en ligne (`/prestations/`) ou par double-clic depuis un poste hors 
    - la liste des prestations pouvant faire l'objet de **bons de commande**, annexe n° 3 (rubriques Travaux, Fournitures, Services).
 2. **Sélection** par case à cocher, par catégorie entière, ou par saisie libre pour les catégories dont le texte se termine par « etc. » (listes non exhaustives).
 3. **Descriptif technique généré automatiquement** pour chaque prestation retenue, à partir d'une bibliothèque de descriptifs types intégrée (couverture : 384 des 390 libellés). Le descriptif est modifiable ligne par ligne et régénérable.
-4. **Saisie** de l'unité, de la quantité, du prix unitaire hors taxe et des observations ; calcul du total hors T.V.A., de la T.V.A. au taux choisi (20, 14, 10, 7 % ou exonéré) et du total T.T.C., avec arrêté du montant en toutes lettres.
-5. **Export Excel (.xlsx)** en deux feuilles : le bordereau des prix — détail estimatif (avec formules vivantes `D×E` et `SUM`) et une récapitulation par catégorie. Un mode « état des besoins » sans prix est également disponible.
-6. **Impression** au format A4 d'un document conforme à la présentation administrative, avec cartouches de signature.
+4. **Composition du bordereau** :
+   - **duplication** d'une ligne pour porter plusieurs spécifications d'une même prestation (deux configurations de poste de travail, deux formats de papier…) ; la variante se place à la suite de la ligne d'origine et son libellé devient modifiable ;
+   - **ordonnancement** : ordre des nomenclatures par défaut, ordre manuel dès qu'une ligne est montée ou descendue, avec rétablissement possible en un clic ;
+   - retirer une prestation retire aussi ses variantes.
+5. **Saisie** de l'unité, de la quantité, du prix unitaire hors taxe et des observations ; calcul du total hors T.V.A., de la T.V.A. au taux choisi (20, 14, 10, 7 % ou exonéré) et du total T.T.C., avec arrêté du montant en toutes lettres.
+6. **Export Excel (.xlsx)** en deux feuilles : le bordereau des prix — détail estimatif (avec formules vivantes `D×E` et `SUM`) et une récapitulation par catégorie. Un mode « état des besoins » sans prix est également disponible.
+7. **Impression** au format A4 d'un document conforme à la présentation administrative, avec cartouches de signature.
 
 La saisie est conservée dans le navigateur (`localStorage`) : fermer l'onglet ne perd rien.
 
