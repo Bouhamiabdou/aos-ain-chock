@@ -35,8 +35,13 @@ le serveur local reste plus fidèle au rendu en ligne.
 
 ## Comment le site est construit
 
-Tout tient dans **un seul fichier**, `aos-ain-chock/index.html` (~68 Ko), CSS et
-JavaScript inclus. Pas de framework, pas d'étape de build, pas de `npm install`.
+La page d'accueil tient dans **un seul fichier**, `aos-ain-chock/index.html`
+(~68 Ko), CSS et JavaScript inclus. Pas de framework, pas d'étape de build, pas de
+`npm install`.
+
+Le dossier publié peut contenir d'autres pages autonomes à côté de l'accueil, dans
+leur propre sous-dossier (chacune documentée chez elle) : elles sont servies par la
+même configuration Netlify, sans build ni dépendance.
 
 - **Polices auto-hébergées.** Les `.woff2` de `assets/fonts/` sont des
   sous-ensembles réduits aux seuls caractères utilisés — d'où leur petite taille.
