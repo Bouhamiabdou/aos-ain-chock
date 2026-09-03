@@ -39,9 +39,11 @@ La page d'accueil tient dans **un seul fichier**, `aos-ain-chock/index.html`
 (~68 Ko), CSS et JavaScript inclus. Pas de framework, pas d'étape de build, pas de
 `npm install`.
 
-Le dossier publié peut contenir d'autres pages autonomes à côté de l'accueil, dans
-leur propre sous-dossier (chacune documentée chez elle) : elles sont servies par la
-même configuration Netlify, sans build ni dépendance.
+Le dossier publié contient aussi des pages autonomes à côté de l'accueil, dans leur
+propre sous-dossier et documentées chez elles — aujourd'hui `prestations/`, un
+sélecteur de prestations qui exporte un bordereau des prix au format Excel. Elles
+sont servies par la même configuration Netlify, sans build ni dépendance, et ne sont
+pas liées depuis la page d'accueil.
 
 - **Polices auto-hébergées.** Les `.woff2` de `assets/fonts/` sont des
   sous-ensembles réduits aux seuls caractères utilisés — d'où leur petite taille.
