@@ -260,6 +260,12 @@ summary.bloc-titre:hover{color:var(--accent)}
               <option>Marché négocié</option>
               <option>Bon de commande</option>
             </select></div>
+          <div class="champ"><label for="e-nature">Nature du marché</label>
+            <select id="e-nature" data-e="nature">
+              <option>Fournitures</option><option>Travaux</option><option>Services</option>
+            </select></div>
+        </div>
+        <div class="duo">
           <div class="champ"><label for="e-tva">Taux de T.V.A.</label>
             <select id="e-tva" data-e="tva">
               <option value="20">20 %</option><option value="14">14 %</option>
@@ -318,7 +324,7 @@ const S = {
   doc: "bpde",
   ordre: "nomenclature",        /* « nomenclature » ou « manuel » */
   entete: { maitre:"", service:"", objet:"", numero:"", date:"", exercice:"",
-            rubrique:"", mode:"", tva:"20", demandeur:"", qualite:"", concurrent:"", lieu:"" },
+            rubrique:"", mode:"", nature:"Fournitures", tva:"20", demandeur:"", qualite:"", concurrent:"", lieu:"" },
   sel: {}
 };
 function sauver(){ try{ localStorage.setItem(CLE, JSON.stringify(S)); }catch(e){} }
@@ -1230,16 +1236,19 @@ function designation(x){
 
 function construireClasseur(){
   const l = lignesTriees(), e = S.entete, prix = avecPrix(), t = totaux();
-  const nc = prix ? 7 : 5;                       /* nombre de colonnes */
+  /* Mise en page reprise du modèle « bordereau des prix — fournitures » :
+     six colonnes, lignes de lot fusionnées, numérotation continue, totaux
+     fusionnés sur A:E. La colonne des observations n'apparaît que si au
+     moins une observation est renseignée, pour ne rien perdre de la saisie
+     sans s'écarter du modèle. */
+  const obs = l.some(function(x){ return (x.obs || "").trim(); });
+  const nc = (prix ? 6 : 4) + (obs ? 1 : 0);
+  const colTotal = prix ? 5 : -1;                /* index de la colonne PRIX T (HT) */
   const F = nouvelleFeuille();
-  F.cols = prix
-    ? '<col min="1" max="1" width="9" customWidth="1"/><col min="2" max="2" width="62" customWidth="1"/>'
-      + '<col min="3" max="3" width="12" customWidth="1"/><col min="4" max="4" width="11" customWidth="1"/>'
-      + '<col min="5" max="5" width="16" customWidth="1"/><col min="6" max="6" width="18" customWidth="1"/>'
-      + '<col min="7" max="7" width="26" customWidth="1"/>'
-    : '<col min="1" max="1" width="9" customWidth="1"/><col min="2" max="2" width="70" customWidth="1"/>'
-      + '<col min="3" max="3" width="12" customWidth="1"/><col min="4" max="4" width="11" customWidth="1"/>'
-      + '<col min="5" max="5" width="30" customWidth="1"/>';
+  F.cols = '<col min="1" max="1" width="6" customWidth="1"/><col min="2" max="2" width="45" customWidth="1"/>'
+    + '<col min="3" max="3" width="10" customWidth="1"/><col min="4" max="4" width="12" customWidth="1"/>'
+    + (prix ? '<col min="5" max="5" width="14" customWidth="1"/><col min="6" max="6" width="14" customWidth="1"/>' : "")
+    + (obs ? '<col min="' + (nc) + '" max="' + (nc) + '" width="24" customWidth="1"/>' : "");
 
   const pleine = (txt, st, h) => {
     const c = [{v:txt, s:st}];
@@ -1251,23 +1260,26 @@ function construireClasseur(){
   pleine(e.maitre || "Maître d'ouvrage", 3, 16);
   if(e.service) pleine(e.service, 3, 16);
   F.vide();
-  pleine(prix ? "BORDEREAU DES PRIX — DÉTAIL ESTIMATIF" : "ÉTAT DES BESOINS", 2, 22);
-  if(e.numero) pleine((e.mode ? e.mode + " — " : "") + "Marché / A.O. n° " + e.numero, 3, 16);
-  else if(e.mode) pleine(e.mode, 3, 16);
+  const nature = (e.nature || "Fournitures").toUpperCase();
+  pleine(prix
+    ? "ESTIMATION DU COUT DES PRESTATIONS DU MARCHE DE " + nature
+      + " N° " + (e.numero || "____/__")
+    : "ETAT DES BESOINS EN " + nature, 2, 22);
   if(e.objet) pleine("Objet : " + e.objet, 3, 18);
   F.vide();
 
   const infos = [
     ["Exercice budgétaire", e.exercice, "Rubrique budgétaire", e.rubrique],
-    ["Date", dateFr(e.date), "Taux de T.V.A.", prix ? (e.tva + " %") : "—"],
-    ["Concurrent / attributaire", e.concurrent, "Nombre de prix", String(l.length)]
+    ["Date", dateFr(e.date), prix ? "Taux de T.V.A." : "Nombre de lignes",
+     prix ? (e.tva + " %") : String(l.length)],
+    ["Mode de passation", e.mode, "Concurrent / attributaire", e.concurrent]
   ];
   const demi = Math.max(2, Math.floor(nc/2));
   infos.forEach(function(row){
-    const c = [{v:row[0], s:12}];
-    for(let i=1;i<demi;i++) c.push({v:"", s:13});
+    const c = [];
+    for(let i=0;i<nc;i++) c.push({v:"", s:13});
+    c[0] = {v:row[0], s:12};
     c[1] = {v:row[1] || "—", s:13};
-    for(let i=demi;i<nc;i++) c.push({v:"", s:13});
     c[demi] = {v:row[2], s:12};
     c[demi+1] = {v:row[3] || "—", s:13};
     const r = F.ligne(c, 16);
@@ -1276,18 +1288,21 @@ function construireClasseur(){
   });
   F.vide();
 
-  const enTetes = prix
-    ? ["N° du prix","Désignation des prestations","Unité","Quantité","Prix unitaire\nen DH (H.T.)","Prix total\nen DH (H.T.)","Observations"]
-    : ["N°","Désignation des prestations","Unité","Quantité","Observations"];
-  const rTete = F.ligne(enTetes.map(v => ({v:v, s:4})), 34);
+  /* En-têtes repris mot pour mot du modèle */
+  const enTetes = ["N°",
+    "DESIGNATION DES " + (e.nature === "Travaux" ? "TRAVAUX" : e.nature === "Services" ? "SERVICES" : "FOURNITURES"),
+    "UNITE", "QUANTITE"];
+  if(prix) enTetes.push("PRIX U(HT)", "PRIX T (HT)");
+  if(obs) enTetes.push("OBSERVATIONS");
+  const rTete = F.ligne(enTetes.map(v => ({v:v, s:4})), 30);
   F.freeze = rTete;
 
-  let cat = null, premiere = 0, derniere = 0, n = 0;
+  let cat = null, premiere = 0, derniere = 0, n = 0, lot = 0;
   l.forEach(function(x){
     const etiq = etiquetteCategorie(x);
     if(etiq !== cat){
-      cat = etiq;
-      const c = [{v:etiq, s:9}];
+      cat = etiq; lot++;
+      const c = [{v:"LOT " + lot + " — " + etiq, s:9}];
       for(let i=1;i<nc;i++) c.push({v:"", s:9});
       const r = F.ligne(c, 18); F.fusion(0, r, nc-1, r);
     }
@@ -1298,38 +1313,41 @@ function construireClasseur(){
       cells.push({v:pu, s:7});
       cells.push({v:arrondi(q*pu), s:7, f:"D"+(F.n+1)+"*E"+(F.n+1)});
     }
-    cells.push({v:x.obs||"", s:5});
+    if(obs) cells.push({v:x.obs||"", s:5});
     const r = F.ligne(cells);
     if(!premiere) premiere = r;
     derniere = r;
   });
 
   if(prix && n){
+    const col = colNom(colTotal);
     const ligneTotal = function(lib, val, formule){
       const c = [{v:lib, s:11}];
-      for(let i=1;i<nc-2;i++) c.push({v:"", s:11});
-      c.push({v:val, s:10, f:formule});
-      c.push({v:"", s:10});
-      const r = F.ligne(c, 18); F.fusion(0, r, nc-3, r); return r;
+      for(let i=1;i<nc;i++) c.push({v:"", s:11});
+      c[colTotal] = {v:val, s:10, f:formule};
+      const r = F.ligne(c, 18); F.fusion(0, r, colTotal-1, r); return r;
     };
-    const rHT  = ligneTotal("TOTAL HORS T.V.A.", t.ht, "SUM(F" + premiere + ":F" + derniere + ")");
-    const rTVA = ligneTotal("T.V.A. (" + t.taux + " %)", t.tva, "F" + rHT + "*" + (t.taux/100));
-    ligneTotal("TOTAL T.T.C.", t.ttc, "F" + rHT + "+F" + rTVA);
+    const rHT  = ligneTotal("TOTAL H.T.", t.ht, "SUM(" + col + premiere + ":" + col + derniere + ")");
+    const rTVA = ligneTotal("T.V.A. " + t.taux + " %", t.tva, col + rHT + "*" + (t.taux/100));
+    ligneTotal("TOTAL T.T.C", t.ttc, col + rHT + "+" + col + rTVA);
     F.vide();
     pleine("Arrêté le présent bordereau des prix — détail estimatif à la somme de : "
       + montantLettres(t.ttc) + " toutes taxes comprises (" + fmt(t.ttc) + " DH T.T.C.).", 14, 34);
   }
 
   F.vide(); F.vide();
-  const rSign = F.ligne([{v:"Dressé par :", s:15}, {v:"", s:15}, {v:"", s:15},
-                         {v:"Lu et accepté par le concurrent", s:15}, {v:"", s:15}, {v:"", s:15}, {v:"", s:15}], 18);
-  F.fusion(0, rSign, 1, rSign); F.fusion(3, rSign, nc-1, rSign);
-  const rQual = F.ligne([{v:(e.demandeur||"") + (e.qualite ? " — " + e.qualite : ""), s:15}, {v:"", s:15}, {v:"", s:15},
-                         {v:e.concurrent || "", s:15}, {v:"", s:15}, {v:"", s:15}, {v:"", s:15}], 18);
-  F.fusion(0, rQual, 1, rQual); F.fusion(3, rQual, nc-1, rQual);
-  const rLieu = F.ligne([{v:(e.lieu ? "Fait à " + e.lieu : "") + (e.date ? ", le " + dateFr(e.date) : ""), s:15},
-                         {v:"", s:15}, {v:"", s:15}, {v:"(signature et cachet)", s:15}, {v:"", s:15}, {v:"", s:15}, {v:"", s:15}], 18);
-  F.fusion(0, rLieu, 1, rLieu); F.fusion(3, rLieu, nc-1, rLieu);
+  const droite = Math.max(2, Math.floor(nc/2));
+  const rangSign = function(gauche, droit){
+    const c = [];
+    for(let i=0;i<nc;i++) c.push({v:"", s:15});
+    c[0] = {v:gauche, s:15};
+    c[droite] = {v:droit, s:15};
+    const r = F.ligne(c, 18);
+    F.fusion(0, r, droite-1, r); F.fusion(droite, r, nc-1, r); return r;
+  };
+  rangSign("Dressé par :", "Lu et accepté par le concurrent");
+  rangSign((e.demandeur||"") + (e.qualite ? " — " + e.qualite : ""), e.concurrent || "");
+  rangSign((e.lieu ? "Fait à " + e.lieu : "") + (e.date ? ", le " + dateFr(e.date) : ""), "(signature et cachet)");
   F.vide();
   pleine("Descriptifs techniques types produits par l'application, à vérifier et à compléter par le service technique compétent avant intégration au dossier d'appel d'offres.", 16, 26);
 
@@ -1429,25 +1447,29 @@ function construireImpression(){
   const l = lignesTriees(), e = S.entete, prix = avecPrix(), t = totaux();
   let h = '<div class="imp-royaume">ROYAUME DU MAROC</div>'
     + '<div class="imp-entite">' + ech(e.maitre) + (e.service ? "<br>" + ech(e.service) : "") + "</div>"
-    + '<div class="imp-titre">' + (prix ? "Bordereau des prix — détail estimatif" : "État des besoins") + "</div>"
-    + '<div class="imp-objet">' + (e.numero ? "Marché / A.O. n° " + ech(e.numero) + (e.mode ? " — " + ech(e.mode) : "") + "<br>" : "")
-    + (e.objet ? "Objet : " + ech(e.objet) : "") + "</div>"
+    + '<div class="imp-titre">' + (prix
+        ? "Estimation du coût des prestations du marché de " + ech((e.nature || "Fournitures").toLowerCase())
+          + " n° " + ech(e.numero || "____/__")
+        : "État des besoins en " + ech((e.nature || "Fournitures").toLowerCase())) + "</div>"
+    + '<div class="imp-objet">' + (e.objet ? "Objet : " + ech(e.objet) : "")
+    + (e.mode ? (e.objet ? "<br>" : "") + ech(e.mode) : "") + "</div>"
     + '<table class="imp-infos"><tr><td class="lab">Exercice budgétaire</td><td>' + ech(e.exercice || "—")
     + '</td><td class="lab">Rubrique budgétaire</td><td>' + ech(e.rubrique || "—") + "</td></tr>"
     + '<tr><td class="lab">Date</td><td>' + ech(dateFr(e.date) || "—")
     + '</td><td class="lab">' + (prix ? "Taux de T.V.A." : "Nombre de lignes") + "</td><td>"
     + (prix ? ech(e.tva) + " %" : l.length) + "</td></tr></table>";
 
-  h += '<table class="imp"><thead><tr><th style="width:8%">N°</th><th>Désignation des prestations</th>'
-    + '<th style="width:9%">Unité</th><th style="width:9%">Qté</th>'
-    + (prix ? '<th style="width:13%">P.U. H.T.</th><th style="width:14%">Total H.T.</th>' : "")
+  const nom = e.nature === "Travaux" ? "travaux" : e.nature === "Services" ? "services" : "fournitures";
+  h += '<table class="imp"><thead><tr><th style="width:7%">N°</th><th>Désignation des ' + nom + "</th>"
+    + '<th style="width:9%">Unité</th><th style="width:9%">Quantité</th>'
+    + (prix ? '<th style="width:13%">Prix U. (H.T.)</th><th style="width:14%">Prix T. (H.T.)</th>' : "")
     + "</tr></thead><tbody>";
-  let cat = null, n = 0;
+  let cat = null, n = 0, lot = 0;
   l.forEach(function(x){
     const etiq = etiquetteCategorie(x);
     if(etiq !== cat){
-      cat = etiq;
-      h += '<tr class="cat"><td colspan="' + (prix ? 6 : 4) + '">' + ech(etiq) + "</td></tr>";
+      cat = etiq; lot++;
+      h += '<tr class="cat"><td colspan="' + (prix ? 6 : 4) + '">LOT ' + lot + " — " + ech(etiq) + "</td></tr>";
     }
     n++;
     const q = Number(x.qte)||0, pu = Number(x.pu)||0;
@@ -1458,9 +1480,9 @@ function construireImpression(){
       + "</tr>";
   });
   if(prix){
-    h += '<tr class="tot"><td colspan="5" class="d">TOTAL HORS T.V.A.</td><td class="d">' + fmt(t.ht) + "</td></tr>"
-      + '<tr class="tot"><td colspan="5" class="d">T.V.A. (' + t.taux + ' %)</td><td class="d">' + fmt(t.tva) + "</td></tr>"
-      + '<tr class="tot"><td colspan="5" class="d">TOTAL T.T.C.</td><td class="d">' + fmt(t.ttc) + "</td></tr>";
+    h += '<tr class="tot"><td colspan="5" class="d">TOTAL H.T.</td><td class="d">' + fmt(t.ht) + "</td></tr>"
+      + '<tr class="tot"><td colspan="5" class="d">T.V.A. ' + t.taux + ' %</td><td class="d">' + fmt(t.tva) + "</td></tr>"
+      + '<tr class="tot"><td colspan="5" class="d">TOTAL T.T.C</td><td class="d">' + fmt(t.ttc) + "</td></tr>";
   }
   h += "</tbody></table>";
   if(prix){
