@@ -130,6 +130,13 @@ summary.bloc-titre:hover{color:var(--accent)}
 .mini-champ label{display:block;font-size:10px;color:var(--text-3);margin-bottom:2px;font-weight:600}
 .mini-champ input{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12px;width:100%;min-width:0}
 .mini-champ input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.merc-etat{font-size:12px;color:var(--text-2);margin:0 0 9px;line-height:1.45}
+.merc-etat b{color:var(--accent)}
+.merc-aide{font-size:11px;color:var(--text-3);margin:8px 0 0;line-height:1.45}
+.prov{margin-top:6px;font-size:11px;font-family:var(--mono);color:var(--text-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.prov .pastille{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
+.prov.perime{color:var(--brass)}
+.prov.perime .pastille{background:var(--brass)}
 .desc-bloc{margin-top:8px}
 .desc-bloc label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10px;color:var(--text-3);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .desc-bloc .regen{background:none;border:1px solid var(--line);border-radius:5px;padding:1px 7px;font-size:10px;color:var(--text-3);cursor:pointer;text-transform:none;letter-spacing:0}
@@ -282,6 +289,30 @@ summary.bloc-titre:hover{color:var(--accent)}
           <div class="champ"><label for="e-lieu">Fait à</label><input id="e-lieu" data-e="lieu" placeholder="Ex. : Casablanca"></div>
         </div>
       </details>
+      <details id="det-merc">
+        <summary class="bloc-titre">Mercuriale — base des prix</summary>
+        <p class="merc-etat" id="merc-etat"></p>
+        <div class="duo">
+          <div class="champ"><label for="merc-peremption">Péremption des prix</label>
+            <select id="merc-peremption">
+              <option value="6">6 mois</option>
+              <option value="12" selected>12 mois</option>
+              <option value="24">24 mois</option>
+              <option value="0">Sans limite</option>
+            </select></div>
+          <div class="champ"><label for="merc-source">Source par défaut</label>
+            <input id="merc-source" placeholder="Ex. : marché n° 07/2026"></div>
+        </div>
+        <div class="rangee">
+          <button class="btn" id="merc-importer">Importer une mercuriale</button>
+          <button class="btn" id="merc-exporter">Exporter</button>
+        </div>
+        <div class="rangee">
+          <button class="btn" id="merc-alimenter">Alimenter depuis ce bordereau</button>
+        </div>
+        <p class="merc-aide">Fichier CSV à sept colonnes : référentiel, catégorie, prestation, unité, prix unitaire H.T., date du prix, source. Enregistrez votre classeur Excel au format CSV pour l'importer.</p>
+        <input type="file" id="merc-fichier" accept=".csv,text/csv,text/plain" hidden>
+      </details>
       <div class="bloc-titre">Lignes retenues</div>
       <div class="barre-ordre" id="barre-ordre" hidden>
         <span id="etiq-ordre">Ordre : nomenclature</span>
@@ -323,6 +354,9 @@ const S = {
   ref: DONNEES.referentiels[0].id,
   doc: "bpde",
   ordre: "nomenclature",        /* « nomenclature » ou « manuel » */
+  mercuriale: {},               /* prix connus, importés ou relevés */
+  peremption: "12",             /* mois au-delà desquels un prix est signalé */
+  sourceDefaut: "",
   entete: { maitre:"", service:"", objet:"", numero:"", date:"", exercice:"",
             rubrique:"", mode:"", nature:"Fournitures", tva:"20", demandeur:"", qualite:"", concurrent:"", lieu:"" },
   sel: {}
@@ -335,6 +369,9 @@ function charger(){
     if(b.ref) S.ref = b.ref;
     if(b.doc) S.doc = b.doc;
     if(b.ordre) S.ordre = b.ordre;
+    if(b.mercuriale) S.mercuriale = b.mercuriale;
+    if(b.peremption) S.peremption = b.peremption;
+    if(b.sourceDefaut) S.sourceDefaut = b.sourceDefaut;
     if(b.entete) Object.assign(S.entete, b.entete);
     if(b.sel) S.sel = b.sel;
   }catch(e){}
@@ -448,6 +485,46 @@ function dupliquer(k){
    s'imposent alors au bordereau, à l'impression et au classeur, quel que soit
    le type de document choisi. */
 function avecPrix(){ return true; }
+/* ============================================================
+   Mercuriale : mémoire des prix du service.
+   Livrée vide — chaque prix vient d'un marché, d'un devis ou
+   d'un bon de commande, avec sa date et sa source. Aucun prix
+   n'est supposé ni calculé d'office.
+   ============================================================ */
+function cleMerc(ref, gnum, lib){ return ref + "@@" + gnum + "@@" + sansAccent(lib); }
+function cleLibelleSeul(lib){ return "*@@*@@" + sansAccent(lib); }
+
+function prixConnu(ref, gnum, lib){
+  return S.mercuriale[cleMerc(ref, gnum, lib)] || S.mercuriale[cleLibelleSeul(lib)] || null;
+}
+/* Ancienneté d'un prix, en mois entiers. */
+function moisDepuis(iso){
+  if(!iso) return null;
+  const d = new Date(iso);
+  if(isNaN(d)) return null;
+  const n = new Date();
+  return (n.getFullYear() - d.getFullYear()) * 12 + (n.getMonth() - d.getMonth());
+}
+function prixPerime(iso){
+  const seuil = Number(S.peremption) || 0;
+  if(!seuil) return false;
+  const m = moisDepuis(iso);
+  return m === null || m > seuil;
+}
+/* Applique à une ligne le prix connu, si aucun prix n'a été saisi à la main. */
+function appliquerPrixConnu(x){
+  if(String(x.pu).trim() !== "") return;
+  const p = prixConnu(x.ref, x.gnum, x.lib);
+  if(!p) return;
+  x.pu = p.pu;
+  if(p.unite) x.unite = p.unite;
+  x.prixDate = p.date || "";
+  x.prixSource = p.source || "";
+}
+function nbPrixConnus(){
+  return Object.keys(S.mercuriale).filter(function(k){ return k.indexOf("*@@*@@") === 0; }).length;
+}
+
 function totaux(){
   const l = lignesTriees();
   let ht = 0;
@@ -619,9 +696,14 @@ function rendrePanier(){
   $("#export").disabled = false; $("#imprimer").disabled = false;
 
   l.forEach(function(x){
-    if(S.sel[x.k] && S.sel[x.k].desc === undefined){
-      S.sel[x.k].desc = descriptifPour(x.ref, x.gnum, x.lib);
-      x.desc = S.sel[x.k].desc;
+    const e = S.sel[x.k];
+    if(!e) return;
+    if(e.desc === undefined){ e.desc = descriptifPour(x.ref, x.gnum, x.lib); x.desc = e.desc; }
+    if(e.prixDate === undefined){
+      appliquerPrixConnu(e);
+      x.pu = e.pu; x.unite = e.unite;
+      x.prixDate = e.prixDate = e.prixDate || "";
+      x.prixSource = e.prixSource = e.prixSource || "";
     }
   });
   sauver();
@@ -651,6 +733,12 @@ function rendrePanier(){
       + '<div class="desc-bloc"><label>Descriptif technique '
       + '<button class="regen" data-g="'+ech(x.k)+'" title="Régénérer à partir de la bibliothèque">régénérer</button></label>'
       + '<textarea data-f="desc" rows="3" spellcheck="false">' + ech(x.desc||"") + "</textarea></div>"
+      + (x.prixDate
+          ? '<div class="prov' + (prixPerime(x.prixDate) ? " perime" : "") + '"><span class="pastille"></span>'
+            + "Prix du " + ech(dateFr(x.prixDate))
+            + (x.prixSource ? " · " + ech(x.prixSource) : "")
+            + (prixPerime(x.prixDate) ? " · à réactualiser" : "") + "</div>"
+          : "")
       + (prix ? '<div class="ligne-mt">' + fmt(mt) + " DH H.T.</div>" : "")
       + "</div>";
   });
@@ -686,6 +774,12 @@ function rendrePanier(){
       const k = inp.closest(".ligne").dataset.k;
       if(!S.sel[k]) return;
       S.sel[k][inp.dataset.f] = inp.value;
+      if(inp.dataset.f === "pu"){        /* la provenance ne vaut plus pour un prix retouché */
+        S.sel[k].prixDate = "";
+        S.sel[k].prixSource = "";
+        const p = inp.closest(".ligne").querySelector(".prov");
+        if(p) p.remove();
+      }
       sauver();
       if(inp.dataset.f === "qte" || inp.dataset.f === "pu"){
         const x = S.sel[k];
@@ -1522,6 +1616,158 @@ function construireImpression(){
 }
 
 /* ============================================================
+   Mercuriale : import, export, alimentation
+   ============================================================ */
+function telechargerTexte(nom, contenu){
+  const finir = function(){
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([contenu], {type:"text/csv;charset=utf-8"}));
+    a.download = nom;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    message("Mercuriale exportée.");
+  };
+  if(window.claude && claude.use){
+    claude.use("downloads").then(function(d){
+      if(!d) return finir();
+      d.save({filename:nom, data:contenu})
+        .then(function(){ message("Mercuriale enregistrée."); })
+        .catch(function(){ message("Enregistrement annulé."); });
+    }).catch(finir);
+  }else finir();
+}
+
+/* Découpe une ligne de CSV en respectant les guillemets. */
+function csvLigne(t, sep){
+  const out = []; let c = "", q = false;
+  for(let i=0;i<t.length;i++){
+    const ch = t[i];
+    if(q){
+      if(ch === '"'){ if(t[i+1] === '"'){ c += '"'; i++; } else q = false; }
+      else c += ch;
+    }else if(ch === '"') q = true;
+    else if(ch === sep){ out.push(c); c = ""; }
+    else c += ch;
+  }
+  out.push(c);
+  return out.map(function(v){ return v.trim(); });
+}
+function dateISO(t){
+  t = String(t || "").trim();
+  if(!t) return "";
+  let m = t.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return m[1] + "-" + m[2] + "-" + m[3];
+  m = t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if(m) return m[3] + "-" + ("0"+m[2]).slice(-2) + "-" + ("0"+m[1]).slice(-2);
+  m = t.match(/^(\d{1,2})[\/.-](\d{4})$/);          /* mois/année */
+  if(m) return m[2] + "-" + ("0"+m[1]).slice(-2) + "-01";
+  return "";
+}
+function nombreFr(t){
+  const v = String(t || "").replace(/\s/g, "").replace(",", ".").replace(/[^0-9.\-]/g, "");
+  return v === "" ? "" : String(Number(v));
+}
+/* Retrouve l'identifiant d'un référentiel depuis son nom ou son identifiant. */
+function refDepuis(t){
+  const n = sansAccent(t || "");
+  if(!n) return null;
+  const r = DONNEES.referentiels.find(function(x){
+    return x.id === t || sansAccent(x.titre).indexOf(n) >= 0 || n.indexOf(sansAccent(x.titre)) >= 0;
+  });
+  return r ? r.id : null;
+}
+
+function importerMercuriale(texte){
+  texte = texte.replace(/^﻿/, "");
+  const lignes = texte.split(/\r?\n/).filter(function(t){ return t.trim(); });
+  if(!lignes.length){ message("Fichier vide."); return; }
+  const sep = (lignes[0].split(";").length > lignes[0].split(",").length) ? ";" : ",";
+  let debut = 0;
+  const tete = sansAccent(lignes[0]);
+  if(tete.indexOf("prestation") >= 0 || tete.indexOf("designation") >= 0 || tete.indexOf("prix") >= 0) debut = 1;
+
+  let retenus = 0, ignores = 0;
+  for(let i = debut; i < lignes.length; i++){
+    const c = csvLigne(lignes[i], sep);
+    if(c.length < 3) { ignores++; continue; }
+    /* référentiel ; catégorie ; prestation ; unité ; prix ; date ; source */
+    const ref = refDepuis(c[0]), gnum = c[1], lib = c[2];
+    const unite = c[3] || "", pu = nombreFr(c[4]), date = dateISO(c[5]), source = c[6] || "";
+    if(!lib || pu === ""){ ignores++; continue; }
+    const enreg = { pu: pu, unite: unite, date: date, source: source, libelle: lib };
+    if(ref && gnum) S.mercuriale[cleMerc(ref, gnum, lib)] = enreg;
+    S.mercuriale[cleLibelleSeul(lib)] = enreg;
+    retenus++;
+  }
+  sauver();
+  /* les lignes déjà retenues sans prix saisi reçoivent le prix connu */
+  Object.keys(S.sel).forEach(function(k){ delete S.sel[k].prixDate; });
+  rendrePanier(); majMercuriale();
+  message(retenus + " prix repris" + (ignores ? ", " + ignores + " ligne(s) ignorée(s)." : "."));
+}
+
+function exporterMercuriale(){
+  const L = ["Référentiel;Catégorie n°;Prestation;Unité;Prix unitaire H.T.;Date du prix;Source"];
+  const vus = {};
+  Object.keys(S.mercuriale).forEach(function(k){
+    const p = S.mercuriale[k], part = k.split("@@");
+    if(part[0] === "*") return;                     /* doublon du repli par libellé */
+    const r = refPar(part[0]);
+    const g = (r.groupes || []).find(function(z){ return z.num === part[1]; });
+    const lib = p.libelle || (g ? (g.elements.find(function(e){ return sansAccent(e) === part[2]; }) || part[2]) : part[2]);
+    vus[sansAccent(lib)] = true;
+    L.push([r.titre, part[1], lib, p.unite || "", String(p.pu).replace(".", ","),
+            dateFr(p.date), p.source || ""].map(csvChampM).join(";"));
+  });
+  Object.keys(S.mercuriale).forEach(function(k){
+    const part = k.split("@@");
+    if(part[0] !== "*" || vus[part[2]]) return;
+    const p = S.mercuriale[k];
+    L.push(["", "", p.libelle || part[2], p.unite || "", String(p.pu).replace(".", ","),
+            dateFr(p.date), p.source || ""].map(csvChampM).join(";"));
+  });
+  telechargerTexte("Mercuriale_" + new Date().toISOString().slice(0,10) + ".csv",
+                   "﻿" + L.join("\r\n") + "\r\n");
+}
+function csvChampM(v){
+  const t = String(v == null ? "" : v);
+  return /[";\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+}
+
+/* Chaque bordereau achevé alimente la base : les prix saisis y sont versés,
+   datés du jour et rattachés à la source indiquée. */
+function alimenterMercuriale(){
+  const l = lignesTriees().filter(function(x){
+    if((Number(x.pu) || 0) <= 0) return false;
+    const p = prixConnu(x.ref, x.gnum, x.lib);
+    /* prix hérité tel quel de la base : rien de neuf à verser, et le redater
+       lui prêterait une origine qu'il n'a pas. */
+    return !(x.prixDate && p && String(p.pu) === String(x.pu));
+  });
+  if(!l.length){ message("Aucun prix nouveau à verser : tous proviennent déjà de la base."); return; }
+  const src = (S.entete.numero ? "Marché n° " + S.entete.numero : "")
+            || S.sourceDefaut || "Relevé du service";
+  const jour = new Date().toISOString().slice(0,10);
+  l.forEach(function(x){
+    const enreg = { pu: String(x.pu), unite: x.unite || "", date: jour, source: src, libelle: x.lib };
+    S.mercuriale[cleMerc(x.ref, x.gnum, x.lib)] = enreg;
+    S.mercuriale[cleLibelleSeul(x.lib)] = enreg;
+    if(S.sel[x.k]){ S.sel[x.k].prixDate = jour; S.sel[x.k].prixSource = src; }
+  });
+  sauver(); rendrePanier(); majMercuriale();
+  message(l.length + " prix versés à la mercuriale, datés du jour.");
+}
+
+function majMercuriale(){
+  const n = nbPrixConnus();
+  const e = $("#merc-etat");
+  if(!e) return;
+  e.innerHTML = n
+    ? "<b>" + n + "</b> prix en base. Les prestations retenues reçoivent leur dernier prix connu, avec sa date et sa source."
+    : "Base vide. Importez une mercuriale, ou versez-y les prix de ce bordereau : aucun prix n'est supposé d'office.";
+}
+
+/* ============================================================
    Initialisation
    ============================================================ */
 function init(){
@@ -1559,6 +1805,22 @@ function init(){
   $("#tout-deplier").onclick = function(){ document.querySelectorAll("#catalogue details").forEach(d => { d.open = true; }); };
   $("#tout-replier").onclick = function(){ document.querySelectorAll("#catalogue details").forEach(d => { d.open = false; }); };
   $("#export").onclick = exporter;
+  $("#merc-peremption").value = S.peremption;
+  $("#merc-peremption").onchange = function(){ S.peremption = $("#merc-peremption").value; sauver(); rendrePanier(); };
+  $("#merc-source").value = S.sourceDefaut || "";
+  $("#merc-source").oninput = function(){ S.sourceDefaut = $("#merc-source").value; sauver(); };
+  $("#merc-importer").onclick = function(){ $("#merc-fichier").click(); };
+  $("#merc-fichier").onchange = function(){
+    const f = $("#merc-fichier").files[0];
+    if(!f) return;
+    const lecteur = new FileReader();
+    lecteur.onload = function(){ importerMercuriale(String(lecteur.result)); $("#merc-fichier").value = ""; };
+    lecteur.onerror = function(){ message("Lecture du fichier impossible."); };
+    lecteur.readAsText(f, "utf-8");
+  };
+  $("#merc-exporter").onclick = exporterMercuriale;
+  $("#merc-alimenter").onclick = alimenterMercuriale;
+  majMercuriale();
   $("#imprimer").onclick = function(){ construireImpression(); window.print(); };
   $("#vider-tout").onclick = function(){
     if(!Object.keys(S.sel).length) return;

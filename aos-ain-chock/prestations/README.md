@@ -26,8 +26,9 @@ ou de restriction de compte.
    - **ordonnancement** : ordre des nomenclatures par défaut, ordre manuel dès qu'une ligne est montée ou descendue, avec rétablissement possible en un clic ;
    - retirer une prestation retire aussi ses variantes.
 5. **Saisie** de l'unité, de la quantité, du prix unitaire hors taxe et des observations ; calcul du total hors T.V.A., de la T.V.A. au taux choisi (20, 14, 10, 7 % ou exonéré) et du total T.T.C., avec arrêté du montant en toutes lettres.
-6. **Export Excel (.xlsx)** en deux feuilles : le bordereau des prix — détail estimatif (avec formules vivantes `D×E` et `SUM`) et une récapitulation par catégorie. Un mode « état des besoins » sans prix est également disponible.
-7. **Impression** au format A4 d'un document conforme à la présentation administrative, avec cartouches de signature.
+6. **Mercuriale — mémoire des prix du service.** Base livrée **vide** : aucun prix n'y est supposé. Chaque prestation retenue reçoit son dernier prix connu, avec **sa date et sa source**, affichées sous la ligne ; au-delà du délai de péremption retenu (6, 12 ou 24 mois), le prix est signalé « à réactualiser ». La base s'alimente par import d'un fichier CSV à sept colonnes — référentiel, catégorie, prestation, unité, prix unitaire H.T., date, source — ou en versant les prix du bordereau en cours, datés du jour et rattachés au marché ; elle s'exporte au même format. Deux garde-fous : un prix hérité de la base n'est jamais redaté ni réattribué à un marché où il n'a pas été observé, et retoucher un prix à la main efface sa provenance, qui deviendrait mensongère.
+7. **Export Excel (.xlsx)** en deux feuilles : le bordereau des prix — détail estimatif (avec formules vivantes `D×E` et `SUM`) et une récapitulation par catégorie. Un mode « état des besoins » sans prix est également disponible.
+8. **Impression** au format A4 d'un document conforme à la présentation administrative, avec cartouches de signature.
 
 La saisie est conservée dans le navigateur (`localStorage`) : fermer l'onglet ne perd rien.
 
