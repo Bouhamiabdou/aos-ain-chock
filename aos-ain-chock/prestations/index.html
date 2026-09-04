@@ -447,10 +447,7 @@ function dupliquer(k){
 /* Vrai dès qu'au moins un prix unitaire est renseigné : les colonnes de prix
    s'imposent alors au bordereau, à l'impression et au classeur, quel que soit
    le type de document choisi. */
-function avecPrix(){
-  if(S.doc === "bpde") return true;
-  return Object.keys(S.sel).some(function(k){ return (Number(S.sel[k].pu) || 0) > 0; });
-}
+function avecPrix(){ return true; }
 function totaux(){
   const l = lignesTriees();
   let ht = 0;
@@ -907,6 +904,32 @@ DESCRIPTIFS.unshift(
 );
 
 /* ------------------------------------------------------------
+   Descriptifs distincts par denrée et par matière : un descriptif
+   de catégorie répété à l'identique sur dix lignes du bordereau
+   n'a aucune valeur pour le concurrent.
+   ------------------------------------------------------------ */
+DESCRIPTIFS.unshift(
+{m:["viande"],t:"Viandes fraîches de première catégorie, issues d'un abattoir agréé et estampillées par l'ONSSA : viande bovine ou ovine selon commande, découpe et morceaux précisés, taux de gras limité, absence de tout défaut d'aspect ou d'odeur ; livraison en chaîne du froid entre 0 et 4 °C, température contrôlée à la réception, bon de livraison portant le numéro d'agrément de l'abattoir et l'estampille sanitaire."},
+{m:["abats"],t:"Abats frais d'origine bovine ou ovine, issus d'un abattoir agréé et estampillés par l'ONSSA : foie, cœur, langue ou tripes selon commande, parés et nettoyés, exempts de souillures ; livraison en chaîne du froid entre 0 et 4 °C le jour de l'abattage, conditionnement en bacs alimentaires fermés, contrôle contradictoire à la réception."},
+{m:["volaille"],t:"Volaille fraîche prête à cuire, issue d'un abattoir avicole agréé ONSSA : poulet, dinde ou pintane selon commande, calibre et poids unitaire précisés, éviscérée, sans plumes résiduelles ni hématomes ; livraison en chaîne du froid entre 0 et 4 °C, date d'abattage de moins de 48 heures, conditionnement individuel sous film."},
+{m:["oeufs"],t:"Œufs frais de poule de catégorie A, calibre moyen ou gros selon commande, coquille propre et intacte, marquage réglementaire du centre d'emballage, date de ponte de moins de sept jours à la livraison ; conditionnement en alvéoles de 30 unités, transport à l'abri de la chaleur et des chocs."},
+{m:["poisson"],t:"Poisson frais débarqué du jour, issu d'un établissement agréé ONSSA : espèce, taille et présentation précisées, œil clair et bombé, branchies rouges, chair ferme, odeur marine franche ; livraison sous glace fondante à cœur entre 0 et 2 °C, bon de livraison mentionnant la zone et la date de capture."},
+{m:["fruits et legumes"],t:"Fruits et légumes frais de catégorie I, de saison, calibrés et homogènes, exempts de meurtrissures, de moisissures et de résidus phytosanitaires au-delà des limites réglementaires ; livraison en cageots ou caisses plastiques propres, deux à trois fois par semaine selon planning, contrôle qualité contradictoire à la réception avec droit de refus du lot."},
+{m:["pains","patisserie","farine"],t:"Pain et produits de boulangerie du jour, cuits le matin de la livraison : poids unitaire et forme précisés, mie régulière, croûte non brûlée ; farine de blé tendre de type précisé, en sacs de 25 ou 50 kg, exempte de charançons et d'humidité, date de mouture et date limite d'utilisation optimale portées sur l'emballage."},
+{m:["epicerie"],t:"Produits d'épicerie sèche : huile de table, sucre, sel iodé, thé, café, conserves, pâtes et riz selon la liste du bon de commande, marques et grammages précisés, étiquetage réglementaire en arabe et en français, date limite de consommation supérieure aux deux tiers de la durée de vie à la livraison ; emballages d'origine intacts, livraison sur palettes filmées."},
+{m:["legumineuse"],t:"Légumes secs : lentilles, pois chiches, haricots blancs ou fèves selon commande, de la dernière récolte, triés et calibrés, taux d'impuretés inférieur à 1 %, exempts d'insectes et de grains cassés au-delà de 3 % ; conditionnement en sacs de 25 ou 50 kg avec mention de l'origine et de l'année de récolte."},
+{m:["boisson"],t:"Boissons non alcoolisées : eau minérale ou de table, jus de fruits et sodas selon commande, conditionnements et contenances précisés, étiquetage réglementaire, date limite de consommation supérieure à six mois à la livraison ; livraison sur palettes, reprise des emballages consignés le cas échéant."},
+{m:["alimentation animale"],t:"Aliments composés pour animaux : espèce et stade physiologique précisés, formule et valeurs nutritionnelles garanties portées sur l'étiquette, agrément du fabricant, absence de farines animales interdites ; conditionnement en sacs de 25 ou 40 kg, date de fabrication de moins de trois mois, stockage à l'abri de l'humidité."},
+/* --- matières premières de textile et de cuir, détaillées --- */
+{m:["bouton"],t:"Boutons de mercerie : matière, diamètre et nombre de trous précisés, teinte assortie au tissu de la tenue, résistance à l'arrachement et tenue au lavage industriel garanties ; conditionnement par grosse ou par sachet de 100 unités."},
+{m:["coton"],t:"Coton en fibre ou tissu de coton selon commande : titrage ou grammage précisé, longueur de fibre et taux d'impuretés garantis pour la fibre, laize et armure précisées pour le tissu, blanchiment sans chlore, retrait au lavage inférieur à 3 % ; échantillon soumis à l'agrément avant livraison."},
+{m:["cuir"],t:"Cuir de bovin ou d'ovin selon usage : tannage végétal ou au chrome précisé, épaisseur en millimètres, surface en pieds carrés ou en décimètres carrés, fleur régulière sans cicatrices ni trous, souplesse et solidité de la teinture au frottement garanties ; classement par lots homogènes de teinte."},
+{m:["laine"],t:"Laine brute ou filée selon commande : finesse en microns, longueur de brin, taux de suint et de matières végétales garantis pour la laine brute ; titrage et torsion précisés pour le fil, teinture solide au lavage et à la lumière ; conditionnement en balles ou en pelotes selon usage."},
+{m:["tissu"],t:"Tissu d'habillement ou d'ameublement selon usage : composition, grammage au mètre carré, laize et armure précisés, solidité des teintures au lavage, au frottement et à la lumière conforme aux normes applicables, retrait au lavage inférieur à 3 %, traitement non-feu lorsque la destination l'exige ; échantillon de 50 cm soumis à l'agrément avant lancement."},
+{m:["fil"],t:"Fil à coudre industriel : matière et titrage précisés, résistance à la rupture garantie, teinte assortie au tissu, bobines de 1 000 à 5 000 mètres, tenue de la teinture au lavage industriel ; conditionnement par boîte de 10 bobines."}
+);
+
+/* ------------------------------------------------------------
    Descriptifs du catalogue étendu (troisième référentiel).
    Placés en tête, ils l'emportent sur les règles précédentes.
    ------------------------------------------------------------ */
@@ -1179,7 +1202,7 @@ function feuilleXML(F){
 }
 const STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
 + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-+ '<numFmts count="2"><numFmt numFmtId="164" formatCode="#,##0.00"/><numFmt numFmtId="165" formatCode="#,##0.###"/></numFmts>'
++ '<numFmts count="2"><numFmt numFmtId="164" formatCode="#,##0.00"/><numFmt numFmtId="165" formatCode="0.###"/></numFmts>'
 + '<fonts count="5">'
 + '<font><sz val="11"/><name val="Calibri"/></font>'
 + '<font><b/><sz val="11"/><name val="Calibri"/></font>'
@@ -1261,7 +1284,7 @@ function construireClasseur(){
   if(e.service) pleine(e.service, 3, 16);
   F.vide();
   const nature = (e.nature || "Fournitures").toUpperCase();
-  pleine(prix
+  pleine(S.doc === "bpde"
     ? "ESTIMATION DU COUT DES PRESTATIONS DU MARCHE DE " + nature
       + " N° " + (e.numero || "____/__")
     : "ETAT DES BESOINS EN " + nature, 2, 22);
@@ -1269,22 +1292,23 @@ function construireClasseur(){
   F.vide();
 
   const infos = [
-    ["Exercice budgétaire", e.exercice, "Rubrique budgétaire", e.rubrique],
-    ["Date", dateFr(e.date), prix ? "Taux de T.V.A." : "Nombre de lignes",
-     prix ? (e.tva + " %") : String(l.length)],
-    ["Mode de passation", e.mode, "Concurrent / attributaire", e.concurrent]
+    ["Exercice budgétaire", e.exercice],
+    ["Rubrique budgétaire", e.rubrique],
+    ["Date", dateFr(e.date)],
+    ["Mode de passation", e.mode],
+    ["Taux de T.V.A.", e.tva + " %"],
+    ["Concurrent / attributaire", e.concurrent],
+    ["Nombre de prix", String(l.length)]
   ];
-  const demi = Math.max(2, Math.floor(nc/2));
   infos.forEach(function(row){
     const c = [];
     for(let i=0;i<nc;i++) c.push({v:"", s:13});
     c[0] = {v:row[0], s:12};
-    c[1] = {v:row[1] || "—", s:13};
-    c[demi] = {v:row[2], s:12};
-    c[demi+1] = {v:row[3] || "—", s:13};
+    c[1] = {v:"", s:12};
+    c[2] = {v:row[1] || "—", s:13};
     const r = F.ligne(c, 16);
-    F.fusion(1, r, demi-1, r);
-    F.fusion(demi+1, r, nc-1, r);
+    F.fusion(0, r, 1, r);            /* intitulé sur A:B, assez large pour être lu */
+    F.fusion(2, r, nc-1, r);
   });
   F.vide();
 
@@ -1310,7 +1334,7 @@ function construireClasseur(){
     const q = Number(x.qte) || 0, pu = Number(x.pu) || 0;
     const cells = [{v:n, s:6}, {v:designation(x), s:5}, {v:x.unite||"", s:6}, {v:q, s:8}];
     if(prix){
-      cells.push({v:pu, s:7});
+      cells.push({v:(String(x.pu).trim() === "" ? "" : pu), s:7});
       cells.push({v:arrondi(q*pu), s:7, f:"D"+(F.n+1)+"*E"+(F.n+1)});
     }
     if(obs) cells.push({v:x.obs||"", s:5});
@@ -1447,7 +1471,7 @@ function construireImpression(){
   const l = lignesTriees(), e = S.entete, prix = avecPrix(), t = totaux();
   let h = '<div class="imp-royaume">ROYAUME DU MAROC</div>'
     + '<div class="imp-entite">' + ech(e.maitre) + (e.service ? "<br>" + ech(e.service) : "") + "</div>"
-    + '<div class="imp-titre">' + (prix
+    + '<div class="imp-titre">' + (S.doc === "bpde"
         ? "Estimation du coût des prestations du marché de " + ech((e.nature || "Fournitures").toLowerCase())
           + " n° " + ech(e.numero || "____/__")
         : "État des besoins en " + ech((e.nature || "Fournitures").toLowerCase())) + "</div>"
@@ -1476,7 +1500,8 @@ function construireImpression(){
     h += '<tr><td class="c">' + n + "</td><td><strong>" + ech(x.lib) + "</strong>"
       + (x.desc ? '<br><span style="font-size:8pt">' + ech(x.desc) + "</span>" : "")
       + '</td><td class="c">' + ech(x.unite) + '</td><td class="c">' + q + "</td>"
-      + (prix ? '<td class="d">' + fmt(pu) + '</td><td class="d">' + fmt(arrondi(q*pu)) + "</td>" : "")
+      + (prix ? '<td class="d">' + (String(x.pu).trim() === "" ? "" : fmt(pu))
+              + '</td><td class="d">' + (String(x.pu).trim() === "" ? "" : fmt(arrondi(q*pu))) + "</td>" : "")
       + "</tr>";
   });
   if(prix){
