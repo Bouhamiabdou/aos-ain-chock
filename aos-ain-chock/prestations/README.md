@@ -1,7 +1,17 @@
 # Sélecteur de prestations → bordereau des prix — détail estimatif
 
 Application autonome, sans dépendance ni serveur : un seul fichier `index.html`.
-Elle s'ouvre en ligne (`/prestations/`) ou par double-clic depuis un poste hors réseau.
+Elle s'ouvre par double-clic depuis un poste hors réseau, ou en ligne à l'une des deux adresses ci-dessous.
+
+## Où elle est servie
+
+| Hébergement | Adresse | Publication |
+|---|---|---|
+| Netlify | <https://aos-ain-chock.netlify.app/prestations/> | à chaque poussée sur `master`, dossier `aos-ain-chock/` fixé par `netlify.toml` |
+| GitHub Pages | <https://bouhamiabdou.github.io/aos-ain-chock/prestations/> | à chaque poussée sur `master`, par le flux `.github/workflows/pages.yml` |
+
+Les deux servent le même dossier. L'un couvre l'autre en cas d'indisponibilité
+ou de restriction de compte.
 
 ## Ce qu'elle fait
 
