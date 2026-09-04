@@ -29,6 +29,10 @@ jobs:
 
       - name: Préparer GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          # Active GitHub Pages sur le dépôt si ce n'est pas déjà fait,
+          # ce qui évite d'avoir à le régler à la main dans les paramètres.
+          enablement: true
 
       - name: Constituer l'archive du site
         uses: actions/upload-pages-artifact@v3
