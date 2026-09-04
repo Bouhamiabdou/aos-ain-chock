@@ -221,7 +221,7 @@ summary.bloc-titre:hover{color:var(--accent)}
       </div>
       <select class="select-doc" id="doc" aria-label="Type de document">
         <option value="bpde">Bordereau des prix — détail estimatif</option>
-        <option value="besoins">État des besoins (sans prix)</option>
+        <option value="besoins">État des besoins (les prix restent saisissables)</option>
       </select>
       <button class="btn" id="tout-deplier">Tout déplier</button>
       <button class="btn" id="tout-replier">Tout replier</button>
@@ -438,6 +438,13 @@ function dupliquer(k){
   const el = document.querySelector('.ligne[data-k="' + nk.replace(/"/g, '\\"') + '"] input[data-f=lib]');
   if(el) el.focus();
 }
+/* Vrai dès qu'au moins un prix unitaire est renseigné : les colonnes de prix
+   s'imposent alors au bordereau, à l'impression et au classeur, quel que soit
+   le type de document choisi. */
+function avecPrix(){
+  if(S.doc === "bpde") return true;
+  return Object.keys(S.sel).some(function(k){ return (Number(S.sel[k].pu) || 0) > 0; });
+}
 function totaux(){
   const l = lignesTriees();
   let ht = 0;
@@ -596,7 +603,7 @@ function majBadges(){
    Panier / bordereau
    ============================================================ */
 function rendrePanier(){
-  const l = lignesTriees(), prix = S.doc === "bpde";
+  const l = lignesTriees(), prix = avecPrix();
   $("#compteur").textContent = l.length;
   $("#panier-titre").textContent = prix ? "Prix du bordereau" : "Prestations retenues";
   if(!l.length){
@@ -632,10 +639,10 @@ function rendrePanier(){
       + ((x.perso || x.variante)
           ? '<div class="mini-champ champ-lib"><label>Libellé porté au bordereau</label><input value="'+ech(x.lib)+'" data-f="lib"></div>'
           : "")
-      + '<div class="ligne-champs' + (prix ? " prix" : "") + '">'
+      + '<div class="ligne-champs prix">'
       + '<div class="mini-champ"><label>Unité</label><input list="unites" value="'+ech(x.unite)+'" data-f="unite"></div>'
       + '<div class="mini-champ"><label>Quantité</label><input type="number" min="0" step="any" value="'+ech(x.qte)+'" data-f="qte"></div>'
-      + (prix ? '<div class="mini-champ"><label>P.U. H.T.</label><input type="number" min="0" step="0.01" value="'+ech(x.pu)+'" data-f="pu" placeholder="0,00"></div>' : "")
+      + '<div class="mini-champ"><label>P.U. H.T.</label><input type="number" min="0" step="0.01" value="' + ech(x.pu) + '" data-f="pu" placeholder="0,00"></div>' 
       + '<div class="mini-champ"><label>Observations</label><input value="'+ech(x.obs)+'" data-f="obs"></div>'
       + "</div>"
       + '<div class="desc-bloc"><label>Descriptif technique '
@@ -689,7 +696,7 @@ function rendrePanier(){
 }
 function rendreTotaux(){
   const t = totaux(), boite = $("#totaux");
-  if(S.doc !== "bpde" || !t.nb){ boite.hidden = true; return; }
+  if(!avecPrix() || !t.nb){ boite.hidden = true; return; }
   boite.hidden = false;
   boite.innerHTML =
       '<div class="tot-l"><span>Total hors T.V.A.</span><span class="val">' + fmt(t.ht) + " DH</span></div>"
@@ -1222,7 +1229,7 @@ function designation(x){
 }
 
 function construireClasseur(){
-  const l = lignesTriees(), e = S.entete, prix = S.doc === "bpde", t = totaux();
+  const l = lignesTriees(), e = S.entete, prix = avecPrix(), t = totaux();
   const nc = prix ? 7 : 5;                       /* nombre de colonnes */
   const F = nouvelleFeuille();
   F.cols = prix
@@ -1419,7 +1426,7 @@ function message(txt){
    Impression
    ============================================================ */
 function construireImpression(){
-  const l = lignesTriees(), e = S.entete, prix = S.doc === "bpde", t = totaux();
+  const l = lignesTriees(), e = S.entete, prix = avecPrix(), t = totaux();
   let h = '<div class="imp-royaume">ROYAUME DU MAROC</div>'
     + '<div class="imp-entite">' + ech(e.maitre) + (e.service ? "<br>" + ech(e.service) : "") + "</div>"
     + '<div class="imp-titre">' + (prix ? "Bordereau des prix — détail estimatif" : "État des besoins") + "</div>"
