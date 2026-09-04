@@ -5,11 +5,12 @@ Elle s'ouvre en ligne (`/prestations/`) ou par double-clic depuis un poste hors 
 
 ## Ce qu'elle fait
 
-1. **Deux nomenclatures officielles** présentées en arborescence repliable :
+1. **Trois référentiels** présentés en arborescence repliable :
    - la liste des prestations de même nature, annexe à la note de service **n° 3.96.5 du 26 février 1996** du Contrôle Général des Engagements de Dépenses de l'État (27 catégories, 352 éléments constitutifs) ;
-   - la liste des prestations pouvant faire l'objet de **bons de commande**, annexe n° 3 (rubriques Travaux, Fournitures, Services).
+   - la liste des prestations pouvant faire l'objet de **bons de commande**, annexe n° 3 (rubriques Travaux, Fournitures, Services) ;
+   - un **catalogue étendu** de 14 domaines et 127 prestations courantes — informatique et services numériques, réseaux, sûreté, énergie, nettoyage, communication, études, formation, mobilité, santé et social, voirie, assurances, protection au travail. Ce catalogue est **sans valeur réglementaire** : il complète les deux annexes officielles, qui n'ont pas été modifiées. Chaque domaine porte sa **catégorie officielle de rattachement**, reprise dans l'export et à l'impression, pour l'appréciation des prestations de même nature.
 2. **Sélection** par case à cocher, par catégorie entière, ou par saisie libre pour les catégories dont le texte se termine par « etc. » (listes non exhaustives).
-3. **Descriptif technique généré automatiquement** pour chaque prestation retenue, à partir d'une bibliothèque de descriptifs types intégrée (couverture : 384 des 390 libellés). Le descriptif est modifiable ligne par ligne et régénérable.
+3. **Descriptif technique généré automatiquement** pour chaque prestation retenue, à partir d'une bibliothèque de descriptifs types intégrée (couverture : 511 des 517 libellés). Le descriptif est modifiable ligne par ligne et régénérable.
 4. **Composition du bordereau** :
    - **duplication** d'une ligne pour porter plusieurs spécifications d'une même prestation (deux configurations de poste de travail, deux formats de papier…) ; la variante se place à la suite de la ligne d'origine et son libellé devient modifiable ;
    - **ordonnancement** : ordre des nomenclatures par défaut, ordre manuel dès qu'une ligne est montée ou descendue, avec rétablissement possible en un clic ;
