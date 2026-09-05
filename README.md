@@ -77,16 +77,29 @@ le passage en RTL déplace plusieurs éléments (flèches, listes, champs de for
 
 ## Déploiement
 
-Le site est en ligne sur Netlify, sous le projet `aos-ain-chock`.
+Le site est publié à **deux adresses**, qui servent toutes deux le dossier
+`aos-ain-chock/` et se mettent à jour **à chaque poussée sur `master`** :
 
-⚠️ **Le déploiement n'est pas automatique.** Le site Netlify **n'est pas relié à ce
-dépôt GitHub** : le déploiement publié a été créé par envoi direct d'une archive
-(`deploy_source: api`, « Deploy triggered by upload », sans référence de commit).
+| Hébergement | Adresse | Comment |
+|---|---|---|
+| Netlify | <https://aos-ain-chock.netlify.app/> | dossier fixé par `netlify.toml` |
+| GitHub Pages | <https://bouhamiabdou.github.io/aos-ain-chock/> | flux `.github/workflows/pages.yml` |
 
-Conséquence à ne pas manquer : **pousser sur `master` ne met pas le site à jour.**
-Tant que la liaison Git n'est pas configurée, chaque mise en ligne demande un
-nouvel envoi manuel du contenu de `aos-ain-chock/`.
+L'une couvre l'autre en cas d'indisponibilité ou de restriction de compte. Aucune
+commande de build des deux côtés : le dossier est servi tel quel.
 
-Pour passer en déploiement automatique, il faut relier le projet au dépôt depuis
-le tableau de bord Netlify (Project configuration → Build & deploy → Link
-repository), avec `publish = "aos-ain-chock"` et aucune commande de build.
+### Si un déploiement Netlify échoue
+
+Vérifiez d'abord le message du déploiement plutôt que le code. Sur un dépôt
+**privé**, Netlify refuse de construire quand l'auteur des commits n'est pas un
+membre vérifié du compte :
+
+```
+Build blocked: Unrecognized Git contributor.
+This plan allows only verified account members to push to private repos.
+```
+
+La construction est alors refusée avant même de lire un fichier — aucune
+modification du dépôt n'y changera rien. Cela se règle côté Netlify (vérifier le
+contributeur, ou lever la vérification stricte pour ce projet). GitHub Pages n'est
+pas concerné par cette restriction et continue de publier.
