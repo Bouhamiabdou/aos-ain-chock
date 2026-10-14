@@ -27,6 +27,7 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         fps={30}
         durationInFrames={1500}
+        defaultProps={{ voiceover: false }}
       />
     </>
   );

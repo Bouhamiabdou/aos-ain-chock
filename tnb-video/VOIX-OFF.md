@@ -27,6 +27,13 @@ Ton : proche, rassurant, sérieux (« un voisin de confiance »), débit naturel
 
 ## Intégration
 
-Déposer le ou les fichiers dans `tnb-video/public/voiceover/` (ou les envoyer dans la conversation).
-Ils seront ajoutés à la composition avec `<Audio>` de `@remotion/media`,
-et la durée des scènes sera recalée sur l'audio.
+1. Déposer les 7 répliques dans `tnb-video/public/voiceover/` sous les noms `01.mp3` … `07.mp3`.
+2. Rendre avec la voix off activée (la musique baisse alors automatiquement) :
+
+   ```bash
+   npx remotion render TnbVideo out/TNB-darija.mp4 --props='{"voiceover":true}'
+   ```
+
+Chaque réplique démarre 0,3 s après le début de sa scène.
+La musique de fond (`public/music.mp3`) est une composition originale synthétisée
+par `scripts/generate-music.py`, donc libre de droits.
