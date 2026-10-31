@@ -1,10 +1,13 @@
-"""Génère la musique de fond de la vidéo TNB (50 s, 100 BPM).
+"""Génère la musique de fond de la vidéo TNB (100 BPM).
 
 Composition originale synthétisée, donc libre de droits : nappe en la mineur
 avec une couleur hijaz (accord de mi majeur), arpège pincé façon qanun
 et percussion légère façon darbouka (dum / tek).
 
-Usage : python3 scripts/generate-music.py public/music.wav
+Usage : python3 scripts/generate-music.py public/music.wav [durée en secondes]
+
+La piste doit durer au moins autant que la vidéo ; la composition la coupe
+et la fait disparaître en fondu sur les 2 dernières secondes.
 """
 
 import sys
@@ -14,7 +17,7 @@ import numpy as np
 
 SR = 44100
 BPM = 100
-DURATION = 50.0
+DURATION = float(sys.argv[2]) if len(sys.argv) > 2 else 90.0
 BEAT = 60 / BPM
 BAR = 4 * BEAT
 
