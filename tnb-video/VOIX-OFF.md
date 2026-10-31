@@ -37,3 +37,9 @@ Ton : proche, rassurant, sérieux (« un voisin de confiance »), débit naturel
 Chaque réplique démarre 0,3 s après le début de sa scène.
 La musique de fond (`public/music.mp3`) est une composition originale synthétisée
 par `scripts/generate-music.py`, donc libre de droits.
+
+## Voix utilisée
+
+Les fichiers actuels de `public/voiceover/` ont été générés avec ElevenLabs :
+voix **« Yassine – Clear and Modern »** (darija marocaine), modèle Eleven v3,
+avec des indications de jeu `[serious]`, `[firm]` et `[stern]` (sanctions) en tête de réplique.

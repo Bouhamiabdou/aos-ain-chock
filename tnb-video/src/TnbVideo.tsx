@@ -104,7 +104,7 @@ export const TnbVideo: React.FC<TnbVideoProps> = ({
             <Component />
             {voiceover && voiceoverAvailable[i] ? (
               <Sequence name={`VO ${i + 1}`} from={VO_LEAD_IN}>
-                <Audio src={staticFile(voiceoverFile(i))} volume={0.55} />
+                <Audio src={staticFile(voiceoverFile(i))} volume={0.95} />
               </Sequence>
             ) : null}
           </Series.Sequence>
