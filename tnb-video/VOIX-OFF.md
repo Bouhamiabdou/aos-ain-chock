@@ -41,5 +41,7 @@ par `scripts/generate-music.py`, donc libre de droits.
 ## Voix utilisée
 
 Les fichiers actuels de `public/voiceover/` ont été générés avec ElevenLabs :
-voix **« Yassine – Clear and Modern »** (darija marocaine), modèle Eleven v3,
+voix **« Yassine – Clear and Modern »** (darija marocaine), modèle **Eleven v4**,
 avec des indications de jeu `[serious]`, `[firm]` et `[stern]` (sanctions) en tête de réplique.
+
+Chaque fichier est normalisé à -16 LUFS (`ffmpeg -af loudnorm=I=-16:TP=-1.5:LRA=11`).
