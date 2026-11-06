@@ -2,12 +2,5 @@
 [build]
   publish = "aos-ain-chock"
 
-[[headers]]
-  for = "/assets/fonts/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=604800"
+# Les en-tetes sont dans aos-ain-chock/_headers, pour qu'ils suivent le dossier
+# publie quel que soit le mode de deploiement.
