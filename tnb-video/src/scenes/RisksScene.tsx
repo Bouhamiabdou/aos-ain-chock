@@ -91,7 +91,7 @@ export const RisksScene: React.FC = () => {
           }),
         }}
       >
-        + 5% فالشهر الأول
+        زيادة 5% فالشهر الأول
       </Interactive.Div>
 
       <Interactive.Div
@@ -118,7 +118,7 @@ export const RisksScene: React.FC = () => {
           }),
         }}
       >
-        + 0,5% على كل شهر من بعد
+        زيادة 0,5% على كل شهر من بعد
       </Interactive.Div>
 
       <Interactive.Div

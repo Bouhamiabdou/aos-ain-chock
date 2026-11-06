@@ -89,7 +89,7 @@ export const WhatScene: React.FC = () => {
           }),
         }}
       >
-        ١ — كتخلصو للجماعة
+        1 — كتخلصو للجماعة
       </Interactive.Div>
 
       <Interactive.Div
@@ -116,7 +116,7 @@ export const WhatScene: React.FC = () => {
           }),
         }}
       >
-        ٢ — كل عام
+        2 — كل عام
       </Interactive.Div>
 
       <Interactive.Div
@@ -143,7 +143,7 @@ export const WhatScene: React.FC = () => {
           }),
         }}
       >
-        ٣ — أرض عريانة داخل المدار الحضري
+        3 — أرض عريانة داخل المدار الحضري
       </Interactive.Div>
 
       <Caption text="كتخلصو للجماعة كل عام، على كل أرض عريانة داخل المدار الحضري." />

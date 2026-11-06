@@ -74,7 +74,8 @@ export const CalcScene: React.FC = () => {
           }),
         }}
       >
-        المساحة (م²) × ثمن المتر = الرسم ديال العام
+        المساحة (م²) × ثمن المتر
+        <br />= الرسم ديال العام
       </Interactive.Div>
 
       <Interactive.Div
