@@ -8,13 +8,12 @@ En ligne : <https://aos-ain-chock.netlify.app>
 
 ## Ce que contient ce dépôt
 
-Trois dossiers, dont **un seul part en ligne** :
+Deux dossiers, dont **un seul part en ligne** :
 
 | Dossier | Rôle | Publié ? |
 |---|---|---|
 | `aos-ain-chock/` | Le site lui-même. C'est le dossier publié par Netlify. | ✅ oui |
 | `aos-atelier/` | Atelier de conception : maquettes, propositions de logo, emblème SVG, planche de revue, design package. Sert à la fabrication, pas aux visiteurs. | ❌ non |
-| `10k-websites-skill/` | Outil de méthode (skill) utilisé pour construire le site. Ce n'est pas le projet. | ❌ non |
 
 Le cloisonnement est assuré par `netlify.toml` (`publish = "aos-ain-chock"`) :
 tout ce qui est en dehors de ce dossier reste privé, même s'il est committé ici.
@@ -39,11 +38,10 @@ La page d'accueil tient dans **un seul fichier**, `aos-ain-chock/index.html`
 (~68 Ko), CSS et JavaScript inclus. Pas de framework, pas d'étape de build, pas de
 `npm install`.
 
-Le dossier publié contient aussi des pages autonomes à côté de l'accueil, dans leur
-propre sous-dossier et documentées chez elles — aujourd'hui `prestations/`, un
-sélecteur de prestations qui exporte un bordereau des prix au format Excel. Elles
-sont servies par la même configuration Netlify, sans build ni dépendance, et ne sont
-pas liées depuis la page d'accueil.
+Le dossier publié contient aussi `404.html`, la page d'erreur du site, et
+`prestations/index.html`, une simple redirection : le bordereau des prix, qui était
+servi à cette adresse, est une application sans lien avec l'AOS. Il a son propre
+dépôt (`bordereau-prix`) et sa propre adresse, <https://bordereau-prix.netlify.app/>.
 
 - **Polices auto-hébergées.** Les `.woff2` de `assets/fonts/` sont des
   sous-ensembles réduits aux seuls caractères utilisés — d'où leur petite taille.
@@ -60,10 +58,9 @@ pas liées depuis la page d'accueil.
 - **Dégradation propre.** L'apparition de la page est une animation CSS partant de
   l'invisible, pas un état par défaut : si le JavaScript échoue, la page reste
   lisible au lieu de rester blanche.
-- **Cache.** Les polices sont figées pour un an (`immutable`) et les autres assets
-  pour une semaine. Ces règles d'en-tête sont déclarées côté Netlify — vérifiez où
-  avant de les modifier : à la racine dans `netlify.toml`, ou dans
-  `aos-ain-chock/_headers`, qui a l'avantage de suivre le dossier publié même lors
+- **Cache et sécurité.** Les polices sont figées pour un an (`immutable`), les
+  images et la feuille arabe pour une semaine. Ces règles, avec les en-têtes de
+  sécurité, sont dans `aos-ain-chock/_headers`, qui suit le dossier publié même lors
   d'un dépôt manuel.
 
 ## Modifier le contenu
@@ -77,16 +74,27 @@ le passage en RTL déplace plusieurs éléments (flèches, listes, champs de for
 
 ## Déploiement
 
-Le site est publié à **deux adresses**, qui servent toutes deux le dossier
-`aos-ain-chock/` et se mettent à jour **à chaque poussée sur `master`** :
+Le site est publié par **Netlify**, à chaque poussée sur `master`. Un second
+hébergement sur **GitHub Pages** est prévu par le flux `.github/workflows/pages.yml`,
+mais il n'est pas encore actif (voir plus bas). Les deux servent le dossier
+`aos-ain-chock/` :
 
 | Hébergement | Adresse | Comment |
 |---|---|---|
 | Netlify | <https://aos-ain-chock.netlify.app/> | dossier fixé par `netlify.toml` |
-| GitHub Pages | <https://bouhamiabdou.github.io/aos-ain-chock/> | flux `.github/workflows/pages.yml` |
+| GitHub Pages | <https://bouhamiabdou.github.io/aos-ain-chock/> (pas encore actif) | flux `.github/workflows/pages.yml` |
 
-L'une couvre l'autre en cas d'indisponibilité ou de restriction de compte. Aucune
-commande de build des deux côtés : le dossier est servi tel quel.
+Aucune commande de build des deux côtés : le dossier est servi tel quel.
+
+### Activer GitHub Pages
+
+Tant que Pages n'est pas activé, chaque poussée sur `master` produit un déploiement
+`github-pages` en échec (« Create Pages site failed. Resource not accessible by
+integration ») : le flux n'a pas le droit d'activer Pages lui-même. Pour l'activer :
+
+1. le dépôt doit être **public** (ou le compte GitHub en offre **Pro**) ;
+2. *Settings → Pages → Build and deployment → Source* : **GitHub Actions** ;
+3. *Actions → Publier sur GitHub Pages → Run workflow* sur `master`.
 
 ### Si un déploiement Netlify échoue
 
@@ -101,5 +109,5 @@ This plan allows only verified account members to push to private repos.
 
 La construction est alors refusée avant même de lire un fichier — aucune
 modification du dépôt n'y changera rien. Cela se règle côté Netlify (vérifier le
-contributeur, ou lever la vérification stricte pour ce projet). GitHub Pages n'est
-pas concerné par cette restriction et continue de publier.
+contributeur, ou lever la vérification stricte pour ce projet). GitHub Pages, une fois
+activé, n'est pas concerné par cette restriction.
